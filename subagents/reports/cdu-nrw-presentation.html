@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDU NRW — UX Audit Presentation</title>
+  <style>
+    :root {
+      --black: #0a0a0f;
+      --dark: #111118;
+      --surface: #16171f;
+      --card: #1c1e2a;
+      --border: #2a2d40;
+      --text: #e8eaf2;
+      --muted: #6b7094;
+      --accent: #6366f1;
+      --teal: #00b4c8;
+      --orange: #f97316;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --green: #22c55e;
+      --purple: #a78bfa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--black);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ── DECK ── */
+    .deck { width: 100vw; height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      opacity: 0; pointer-events: none;
+      transform: translateY(24px);
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .slide.active {
+      opacity: 1; pointer-events: all;
+      transform: translateY(0);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex; align-items: center; gap: 1.25rem;
+      background: rgba(22,23,31,.9);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .5rem 1.25rem;
+      backdrop-filter: blur(12px);
+    }
+    .nav-btn {
+      background: none; border: none;
+      color: var(--muted); font-size: 1.1rem;
+      cursor: pointer; padding: .2rem .5rem;
+      border-radius: 6px; transition: color .15s, background .15s;
+    }
+    .nav-btn:hover:not(:disabled) { color: var(--text); background: var(--border); }
+    .nav-btn:disabled { opacity: .25; cursor: default; }
+    .nav-dots { display: flex; gap: .5rem; }
+    .nav-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--border); cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+    .nav-label { color: var(--muted); font-size: .75rem; font-weight: 500; min-width: 50px; text-align: center; }
+
+    /* ── SHARED LAYOUT ── */
+    .slide-header {
+      padding: 2.25rem 3rem 0;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .slide-tag {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--accent);
+      background: rgba(99,102,241,.12);
+      border: 1px solid rgba(99,102,241,.25);
+      padding: .25rem .7rem; border-radius: 999px;
+    }
+    .slide-counter { color: var(--muted); font-size: .8rem; font-weight: 500; }
+    .slide-body { flex: 1; min-height: 0; padding: 0 3rem 5rem; }
+
+    /* ════════════════════════════════
+       SLIDE 1 — OVERVIEW
+    ════════════════════════════════ */
+    #s1 { background: var(--dark); }
+    #s1 .slide-body {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      grid-template-rows: auto 1fr;
+      gap: 1.5rem 2.5rem;
+      padding-top: 1.75rem;
+    }
+
+    .s1-headline { grid-column: 1 / -1; }
+    .s1-headline h1 {
+      font-size: 2.6rem; font-weight: 800; line-height: 1.15;
+      color: #fff; letter-spacing: -.03em; margin-bottom: .5rem;
+    }
+    .s1-headline h1 em { font-style: normal; color: var(--teal); }
+    .s1-headline p { color: var(--muted); font-size: .9rem; }
+
+    /* Severity ring chart */
+    .s1-left { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .severity-visual {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem;
+      display: flex; align-items: center; gap: 1.75rem;
+    }
+    .donut-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+    .donut-wrap svg { transform: rotate(-90deg); }
+    .donut-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .donut-center strong { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; }
+    .donut-center span { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    .severity-legend { flex: 1; display: flex; flex-direction: column; gap: .6rem; }
+    .sev-row { display: flex; align-items: center; gap: .65rem; }
+    .sev-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .sev-name { font-size: .8rem; color: var(--muted); flex: 1; }
+    .sev-bar-wrap { flex: 2; height: 5px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .sev-bar { height: 100%; border-radius: 999px; }
+    .sev-count { font-size: .8rem; font-weight: 700; color: var(--text); min-width: 20px; text-align: right; }
+
+    /* Category breakdown */
+    .cat-grid {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem 1.5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+    }
+    .cat-item { display: flex; align-items: center; gap: .6rem; }
+    .cat-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; flex-shrink: 0;
+    }
+    .cat-info strong { display: block; font-size: .82rem; color: var(--text); font-weight: 600; }
+    .cat-info span { font-size: .72rem; color: var(--muted); }
+
+    /* Screenshots strip */
+    .s1-right { display: flex; flex-direction: column; gap: .75rem; }
+    .ss-row { display: flex; gap: .75rem; }
+    .ss-thumb {
+      flex: 1; border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--border); position: relative;
+    }
+    .ss-thumb img { width: 100%; display: block; }
+    .ss-thumb-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.7));
+      padding: .5rem .5rem .35rem;
+      font-size: .65rem; color: #cbd5e1;
+    }
+    .scope-row {
+      display: flex; gap: .5rem; flex-wrap: wrap;
+    }
+    .scope-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: .25rem .65rem;
+      font-size: .72rem; color: var(--muted);
+    }
+    .scope-pill span { color: var(--text); font-weight: 600; }
+
+    /* ════════════════════════════════
+       SLIDE 2 — FINDINGS
+    ════════════════════════════════ */
+    #s2 { background: var(--dark); }
+    #s2 .slide-body {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding-top: 1.25rem;
+    }
+    #s2 .slide-header { padding-bottom: .5rem; }
+    .s2-title { grid-column: 1 / -1; margin-bottom: .25rem; }
+    .s2-title h2 { font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -.025em; }
+    .s2-title p { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
+
+    .finding-col {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: .9rem;
+      min-height: 0;
+    }
+    .col-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .1rem; }
+    .col-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .col-header h3 { font-size: .95rem; font-weight: 700; color: #fff; }
+    .col-header small { display: block; font-size: .7rem; color: var(--muted); }
+
+    .finding-item { display: flex; align-items: flex-start; gap: .6rem; }
+    .fi-sev {
+      width: 6px; height: 6px; border-radius: 50%;
+      flex-shrink: 0; margin-top: .45rem;
+    }
+    .fi-text strong {
+      display: block; font-size: .8rem; color: var(--text);
+      font-weight: 600; line-height: 1.3;
+    }
+    .fi-text span { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+
+    .col-screenshot {
+      margin-top: auto; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .col-screenshot img { width: 100%; display: block; }
+    .col-screenshot-label {
+      background: var(--surface); padding: .3rem .5rem;
+      font-size: .65rem; color: var(--muted);
+    }
+
+    /* ════════════════════════════════
+       SLIDE 3 — RECOMMENDATIONS
+    ════════════════════════════════ */
+    #s3 { background: var(--dark); }
+    #s3 .slide-body {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding-top: 1.25rem;
+    }
+    .s3-title { grid-column: 1 / -1; margin-bottom: .25rem; }
+    .s3-title h2 { font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -.025em; }
+    .s3-title p { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
+
+    .rec-col {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: .8rem;
+      position: relative; overflow: hidden;
+    }
+    .rec-col::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .rec-col.now::before  { background: linear-gradient(90deg, var(--red), var(--orange)); }
+    .rec-col.soon::before { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+    .rec-col.plan::before { background: linear-gradient(90deg, var(--accent), var(--purple)); }
+
+    .rec-header { display: flex; align-items: center; gap: .65rem; }
+    .rec-badge {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; padding: .2rem .55rem; border-radius: 999px;
+    }
+    .badge-now  { background: rgba(239,68,68,.15);  color: var(--red);    border: 1px solid rgba(239,68,68,.3); }
+    .badge-soon { background: rgba(249,115,22,.15); color: var(--orange); border: 1px solid rgba(249,115,22,.3); }
+    .badge-plan { background: rgba(99,102,241,.15); color: var(--purple); border: 1px solid rgba(99,102,241,.3); }
+    .rec-timeline { font-size: .75rem; color: var(--muted); }
+
+    .rec-col h3 { font-size: .95rem; font-weight: 700; color: #fff; }
+
+    .rec-item { display: flex; align-items: flex-start; gap: .55rem; }
+    .rec-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .62rem; font-weight: 700; flex-shrink: 0; margin-top: .1rem;
+    }
+    .num-now  { background: rgba(239,68,68,.2);  color: var(--red); }
+    .num-soon { background: rgba(249,115,22,.2); color: var(--orange); }
+    .num-plan { background: rgba(99,102,241,.2); color: var(--purple); }
+
+    .rec-item p { font-size: .8rem; color: var(--text); line-height: 1.4; }
+    .rec-item p em { font-style: normal; color: var(--muted); font-size: .72rem; display: block; margin-top: .1rem; }
+
+    .rec-col-footer {
+      margin-top: auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: .6rem .75rem;
+    }
+    .rec-col-footer p { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+    .rec-col-footer p strong { color: var(--text); }
+
+    /* kbd shortcut hint */
+    .kbd-hint {
+      position: fixed; bottom: 2rem; right: 2rem;
+      color: var(--muted); font-size: .7rem;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    kbd {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: .1rem .35rem;
+      font-size: .65rem; font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ══════════════════════════════════════
+       SLIDE 1 — OVERVIEW
+  ══════════════════════════════════════ -->
+  <div class="slide active" id="s1">
+    <div class="slide-header">
+      <span class="slide-tag">UX Audit · March 2026</span>
+      <span class="slide-counter">01 / 03</span>
+    </div>
+    <div class="slide-body">
+
+      <div class="s1-headline">
+        <h1>cdu-nrw.de — <em>What We Found</em></h1>
+        <p>Full review of Homepage, News, Partei, Kontakt, Impressum &amp; Datenschutz · 32 issues across 5 categories</p>
+      </div>
+
+      <div class="s1-left">
+
+        <!-- Severity donut -->
+        <div class="severity-visual">
+          <div class="donut-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <!-- Total circumference for r=44: 2π×44 ≈ 276.5 -->
+              <!-- Critical 4/32 = 12.5% = 34.6 -->
+              <!-- High 12/32 = 37.5% = 103.7 -->
+              <!-- Medium 12/32 = 37.5% = 103.7 -->
+              <!-- Low 4/32 = 12.5% = 34.6 -->
+              <circle cx="55" cy="55" r="44" fill="none" stroke="#2a2d40" stroke-width="11"/>
+              <!-- Low (green) — offset 0 -->
+              <circle cx="55" cy="55" r="44" fill="none" stroke="#22c55e" stroke-width="11"
+                stroke-dasharray="34.6 241.9" stroke-dashoffset="0" stroke-linecap="round"/>
+              <!-- Medium (yellow) — offset -34.6 -->
+              <circle cx="55" cy="55" r="44" fill="none" stroke="#eab308" stroke-width="11"
+                stroke-dasharray="103.7 172.8" stroke-dashoffset="-34.6" stroke-linecap="round"/>
+              <!-- High (orange) — offset -138.3 -->
+              <circle cx="55" cy="55" r="44" fill="none" stroke="#f97316" stroke-width="11"
+                stroke-dasharray="103.7 172.8" stroke-dashoffset="-138.3" stroke-linecap="round"/>
+              <!-- Critical (red) — offset -242 -->
+              <circle cx="55" cy="55" r="44" fill="none" stroke="#ef4444" stroke-width="11"
+                stroke-dasharray="34.6 241.9" stroke-dashoffset="-242" stroke-linecap="round"/>
+            </svg>
+            <div class="donut-center">
+              <strong>32</strong>
+              <span>issues</span>
+            </div>
+          </div>
+          <div class="severity-legend">
+            <div class="sev-row">
+              <div class="sev-dot" style="background:var(--red)"></div>
+              <span class="sev-name">Critical</span>
+              <div class="sev-bar-wrap"><div class="sev-bar" style="background:var(--red);width:12.5%"></div></div>
+              <span class="sev-count" style="color:var(--red)">4</span>
+            </div>
+            <div class="sev-row">
+              <div class="sev-dot" style="background:var(--orange)"></div>
+              <span class="sev-name">High</span>
+              <div class="sev-bar-wrap"><div class="sev-bar" style="background:var(--orange);width:37.5%"></div></div>
+              <span class="sev-count" style="color:var(--orange)">12</span>
+            </div>
+            <div class="sev-row">
+              <div class="sev-dot" style="background:var(--yellow)"></div>
+              <span class="sev-name">Medium</span>
+              <div class="sev-bar-wrap"><div class="sev-bar" style="background:var(--yellow);width:37.5%"></div></div>
+              <span class="sev-count" style="color:var(--yellow)">12</span>
+            </div>
+            <div class="sev-row">
+              <div class="sev-dot" style="background:var(--green)"></div>
+              <span class="sev-name">Low</span>
+              <div class="sev-bar-wrap"><div class="sev-bar" style="background:var(--green);width:12.5%"></div></div>
+              <span class="sev-count" style="color:var(--green)">4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category breakdown -->
+        <div class="cat-grid">
+          <div class="cat-item">
+            <div class="cat-icon" style="background:rgba(167,139,250,.12)">♿</div>
+            <div class="cat-info">
+              <strong>Accessibility</strong>
+              <span>10 issues · WCAG 2.1 AA</span>
+            </div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon" style="background:rgba(56,189,248,.12)">🧭</div>
+            <div class="cat-info">
+              <strong>User Experience</strong>
+              <span>11 issues</span>
+            </div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon" style="background:rgba(244,114,182,.12)">🎨</div>
+            <div class="cat-info">
+              <strong>UI / Visual</strong>
+              <span>6 issues</span>
+            </div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-icon" style="background:rgba(52,211,153,.12)">⚡</div>
+            <div class="cat-info">
+              <strong>Performance</strong>
+              <span>3 issues</span>
+            </div>
+          </div>
+          <div class="cat-item" style="grid-column:1/-1">
+            <div class="cat-icon" style="background:rgba(251,146,60,.12)">⚖️</div>
+            <div class="cat-info">
+              <strong>GDPR / Legal</strong>
+              <span>2 issues · Privacy policy dated 2018, Privacy Shield refs invalid</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scope-row">
+          <div class="scope-pill">CMS: <span>Drupal 7 (EOL)</span></div>
+          <div class="scope-pill">Pages: <span>6 reviewed</span></div>
+          <div class="scope-pill">Devices: <span>Desktop + Mobile</span></div>
+          <div class="scope-pill">Standard: <span>WCAG 2.1 AA</span></div>
+        </div>
+
+      </div>
+
+      <!-- Screenshot strip -->
+      <div class="s1-right">
+        <div class="ss-row" style="flex:1">
+          <div class="ss-thumb" style="flex:1.65">
+            <img src="screenshots/homepage_desktop.png" alt="Homepage desktop" />
+            <div class="ss-thumb-label">Homepage — desktop</div>
+          </div>
+          <div class="ss-thumb" style="flex:.7">
+            <img src="screenshots/homepage_mobile.png" alt="Homepage mobile" />
+            <div class="ss-thumb-label">Mobile</div>
+          </div>
+        </div>
+        <div class="ss-row" style="flex:1">
+          <div class="ss-thumb" style="flex:1.65">
+            <img src="screenshots/news_desktop.png" alt="News desktop" />
+            <div class="ss-thumb-label">Aktuelle Meldungen</div>
+          </div>
+          <div class="ss-thumb" style="flex:.7">
+            <img src="screenshots/partei_desktop.png" alt="Partei desktop" />
+            <div class="ss-thumb-label">Partei</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 2 — FINDINGS
+  ══════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="slide-header">
+      <span class="slide-tag">Key Findings</span>
+      <span class="slide-counter">02 / 03</span>
+    </div>
+    <div class="slide-body">
+
+      <div class="s2-title">
+        <h2>Three Areas Driving the Most Risk</h2>
+        <p>Critical and high-severity issues grouped by impact domain</p>
+      </div>
+
+      <!-- Col 1: Accessibility -->
+      <div class="finding-col">
+        <div class="col-header">
+          <div class="col-icon" style="background:rgba(167,139,250,.15)">♿</div>
+          <div>
+            <h3 style="color:var(--purple)">Accessibility</h3>
+            <small>2 critical · 3 high</small>
+          </div>
+        </div>
+
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--red)"></div>
+          <div class="fi-text">
+            <strong>Images have no alt text</strong>
+            <span>Hero slides, news thumbnails, and article images are invisible to screen readers sitewide.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--red)"></div>
+          <div class="fi-text">
+            <strong>Contact form is inaccessible</strong>
+            <span>Image CAPTCHA with no audio alternative completely blocks blind users from reaching the party.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>No ARIA on interactive components</strong>
+            <span>Dropdowns, carousel, and social wall lack roles, aria-expanded, and live regions.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>Hero carousel not keyboard-operable</strong>
+            <span>40+ auto-rotating slides with no pause control — violates WCAG 2.2.2.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>Heading structure is broken</strong>
+            <span>H1 reads "Startseite". H2 is used for "Slideshow" and "Suchformular" — not content.</span>
+          </div>
+        </div>
+
+        <div class="col-screenshot">
+          <img src="screenshots/contact_desktop.png" alt="Contact form" />
+          <div class="col-screenshot-label">Contact form — consent checkbox before fields, no error handling</div>
+        </div>
+      </div>
+
+      <!-- Col 2: UX -->
+      <div class="finding-col">
+        <div class="col-header">
+          <div class="col-icon" style="background:rgba(56,189,248,.15)">🧭</div>
+          <div>
+            <h3 style="color:var(--teal)">User Experience</h3>
+            <small>2 critical · 5 high</small>
+          </div>
+        </div>
+
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--red)"></div>
+          <div class="fi-text">
+            <strong>Cookie banner blocks all content</strong>
+            <span>On mobile the banner covers the entire viewport. First impression is a wall of legal text.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--red)"></div>
+          <div class="fi-text">
+            <strong>40-slide carousel as primary hero</strong>
+            <span>Content beyond slide 1 gets &lt;1% engagement. 40 slides means virtually everything is invisible.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>Mobile navigation hidden</strong>
+            <span>The hamburger menu is detached from the logo — easy to miss on first visit.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>No news filtering or search</strong>
+            <span>9+ pages of articles with pagination only — no way to browse by topic or date.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>Fixed social media sidebar</strong>
+            <span>Outdated pattern from 2014, obscures content on smaller screens.</span>
+          </div>
+        </div>
+
+        <div class="col-screenshot">
+          <img src="screenshots/homepage_mobile.png" alt="Mobile homepage" />
+          <div class="col-screenshot-label">Mobile — cookie banner + carousel dominate; nav hard to find</div>
+        </div>
+      </div>
+
+      <!-- Col 3: Performance & Visual -->
+      <div class="finding-col">
+        <div class="col-header">
+          <div class="col-icon" style="background:rgba(244,114,182,.15)">⚡</div>
+          <div>
+            <h3 style="color:var(--orange)">Performance & Visual</h3>
+            <small>2 high · 3 medium</small>
+          </div>
+        </div>
+
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>50+ CSS files per page</strong>
+            <span>Severe render-blocking — every page loads 50+ separate stylesheets before rendering anything.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--orange)"></div>
+          <div class="fi-text">
+            <strong>Drupal 7 is end-of-life</strong>
+            <span>EOL since November 2023 — no security updates, legacy jQuery, no Core Web Vitals support.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--yellow)"></div>
+          <div class="fi-text">
+            <strong>Fragmented header design</strong>
+            <span>Split dark/white header, awkward orange tagline strip, and 3 competing visual zones.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--yellow)"></div>
+          <div class="fi-text">
+            <strong>3 icon libraries loaded together</strong>
+            <span>FontAwesome, Material Icons, and Glyphicons coexist — visual inconsistency and wasted bytes.</span>
+          </div>
+        </div>
+        <div class="finding-item">
+          <div class="fi-sev" style="background:var(--red)"></div>
+          <div class="fi-text">
+            <strong>Privacy policy dated 2018</strong>
+            <span>Still references Privacy Shield (invalid since 2020) — active legal compliance risk.</span>
+          </div>
+        </div>
+
+        <div class="col-screenshot">
+          <img src="screenshots/homepage_desktop.png" alt="Homepage desktop" />
+          <div class="col-screenshot-label">Homepage — split header, social sidebar, dated visual language</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 3 — RECOMMENDATIONS
+  ══════════════════════════════════════ -->
+  <div class="slide" id="s3">
+    <div class="slide-header">
+      <span class="slide-tag">Recommendations</span>
+      <span class="slide-counter">03 / 03</span>
+    </div>
+    <div class="slide-body">
+
+      <div class="s3-title">
+        <h2>Prioritised Action Plan</h2>
+        <p>Grouped by effort and urgency — quick wins first, structural changes planned</p>
+      </div>
+
+      <!-- Now -->
+      <div class="rec-col now">
+        <div class="rec-header">
+          <span class="rec-badge badge-now">Fix Now</span>
+          <span class="rec-timeline">0 – 4 weeks</span>
+        </div>
+        <h3>Critical &amp; Compliance Fixes</h3>
+
+        <div class="rec-item">
+          <div class="rec-num num-now">1</div>
+          <p>Add descriptive alt text to all images sitewide
+            <em>Use Drupal's Media module alt field — one change propagates everywhere.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-now">2</div>
+          <p>Replace image CAPTCHA with reCAPTCHA v3 or a honeypot field
+            <em>Immediately re-opens the contact form to blind and low-vision users.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-now">3</div>
+          <p>Update the privacy policy — remove Privacy Shield, add SCCs
+            <em>Active legal risk. Requires a lawyer. Publish with a "last updated" date.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-now">4</div>
+          <p>Enable Drupal's CSS &amp; JS aggregation
+            <em>Collapses 50+ files into 2–3. Zero code changes, massive performance gain.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-now">5</div>
+          <p>Redesign cookie banner as a compact bottom bar
+            <em>Use an accessible CMP library (e.g. Klaro). Equal weight for accept/reject.</em>
+          </p>
+        </div>
+
+        <div class="rec-col-footer">
+          <p><strong>Expected impact:</strong> Resolves all 4 critical issues, closes the open GDPR risk, and delivers the biggest performance gain for the least effort.</p>
+        </div>
+      </div>
+
+      <!-- Soon -->
+      <div class="rec-col soon">
+        <div class="rec-header">
+          <span class="rec-badge badge-soon">Fix Soon</span>
+          <span class="rec-timeline">1 – 3 months</span>
+        </div>
+        <h3>UX &amp; Accessibility Improvements</h3>
+
+        <div class="rec-item">
+          <div class="rec-num num-soon">1</div>
+          <p>Replace the 40-slide carousel with a 3-item featured grid
+            <em>Static cards with image, title, date and CTA. No auto-rotation.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-soon">2</div>
+          <p>Add ARIA attributes to all interactive components
+            <em>aria-expanded on menus, aria-current on active nav, landmarks on page regions.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-soon">3</div>
+          <p>Add news category tags and filter UI
+            <em>Drupal Views with exposed filters — no custom code. Dramatically improves discoverability.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-soon">4</div>
+          <p>Fix mobile navigation — make hamburger visible in header
+            <em>Attach toggle to the logo row. Label it "Menü" with icon + text.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-soon">5</div>
+          <p>Remove the fixed social media sidebar
+            <em>Move to footer. Add proper aria-labels to all social links.</em>
+          </p>
+        </div>
+
+        <div class="rec-col-footer">
+          <p><strong>Expected impact:</strong> Eliminates the most user-facing friction points. Likely increases content engagement and contact form completions significantly.</p>
+        </div>
+      </div>
+
+      <!-- Plan -->
+      <div class="rec-col plan">
+        <div class="rec-header">
+          <span class="rec-badge badge-plan">Plan &amp; Invest</span>
+          <span class="rec-timeline">3 – 12 months</span>
+        </div>
+        <h3>Strategic &amp; Structural Overhaul</h3>
+
+        <div class="rec-item">
+          <div class="rec-num num-plan">1</div>
+          <p>Migrate from Drupal 7 to Drupal 10 or headless CMS
+            <em>EOL platform is a security and performance liability. Plan a 3–6 month migration.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-plan">2</div>
+          <p>Full visual redesign with a unified design system
+            <em>One icon library, 8px spacing grid, consistent typography scale, modern header.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-plan">3</div>
+          <p>Flatten navigation to 2 levels with a mega-menu for Partei
+            <em>Removes 3-level deep nesting. Dramatically improves mobile usability.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-plan">4</div>
+          <p>Replace social media embeds with server-side cached feeds
+            <em>No more blank "aktivieren" boxes. Better performance, GDPR-safe by default.</em>
+          </p>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num num-plan">5</div>
+          <p>Commission a full WCAG 2.1 AA audit post-redesign
+            <em>Verify contrast ratios, keyboard flows, and screen reader compatibility end-to-end.</em>
+          </p>
+        </div>
+
+        <div class="rec-col-footer">
+          <p><strong>Expected impact:</strong> Transforms the site from a legacy Drupal 7 installation into a modern, accessible, performant platform that reflects the party's standing.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn" id="prev" onclick="go(-1)" disabled>←</button>
+  <div class="nav-dots">
+    <div class="nav-dot active" onclick="to(0)"></div>
+    <div class="nav-dot" onclick="to(1)"></div>
+    <div class="nav-dot" onclick="to(2)"></div>
+  </div>
+  <button class="nav-btn" id="next" onclick="go(1)">→</button>
+  <span class="nav-label" id="nl">1 / 3</span>
+</div>
+
+<div class="kbd-hint">
+  <kbd>←</kbd><kbd>→</kbd> navigate
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots   = document.querySelectorAll('.nav-dot');
+  let cur = 0;
+
+  function to(n) {
+    slides[cur].classList.remove('active');
+    dots[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, slides.length - 1));
+    slides[cur].classList.add('active');
+    dots[cur].classList.add('active');
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === slides.length - 1;
+    document.getElementById('nl').textContent = (cur + 1) + ' / ' + slides.length;
+  }
+
+  function go(d) { to(cur + d); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    go(-1);
+  });
+</script>
+</body>
+</html>

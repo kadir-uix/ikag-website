@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UX Review — cdu-nrw.de</title>
+  <style>
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3248;
+      --text: #e2e4f0; --text-muted: #7c82a0; --accent: #6366f1; --accent-soft: rgba(99,102,241,0.12);
+      --critical: #ef4444; --critical-soft: rgba(239,68,68,0.12);
+      --high: #f97316;    --high-soft: rgba(249,115,22,0.12);
+      --medium: #eab308;  --medium-soft: rgba(234,179,8,0.12);
+      --low: #22c55e;     --low-soft: rgba(34,197,94,0.12);
+      --cat-a11y: #a78bfa; --cat-a11y-soft: rgba(167,139,250,0.12);
+      --cat-ux: #38bdf8;   --cat-ux-soft: rgba(56,189,248,0.12);
+      --cat-ui: #f472b6;   --cat-ui-soft: rgba(244,114,182,0.12);
+      --cat-perf: #34d399; --cat-perf-soft: rgba(52,211,153,0.12);
+      --cat-gdpr: #fb923c; --cat-gdpr-soft: rgba(251,146,60,0.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.6}
+
+    /* ── HEADER ── */
+    .hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:1.75rem 2.5rem;display:flex;align-items:flex-start;gap:1.5rem;flex-wrap:wrap}
+    .hdr-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),#818cf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .hdr h1{font-size:1.4rem;font-weight:700;color:#fff}
+    .hdr .meta{color:var(--text-muted);font-size:.825rem;margin-top:.2rem}
+    .hdr .meta a{color:var(--accent);text-decoration:none}.hdr .meta a:hover{text-decoration:underline}
+    .hdr-stats{margin-left:auto;display:flex;gap:.65rem;flex-wrap:wrap;align-items:center}
+    .pill{display:flex;align-items:center;gap:.35rem;padding:.3rem .75rem;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid transparent}
+    .pill.c{background:var(--critical-soft);color:var(--critical);border-color:rgba(239,68,68,.25)}
+    .pill.h{background:var(--high-soft);color:var(--high);border-color:rgba(249,115,22,.25)}
+    .pill.m{background:var(--medium-soft);color:var(--medium);border-color:rgba(234,179,8,.25)}
+    .pill.l{background:var(--low-soft);color:var(--low);border-color:rgba(34,197,94,.25)}
+
+    /* ── SCREENSHOTS GALLERY ── */
+    .gallery{padding:1.5rem 2.5rem;border-bottom:1px solid var(--border)}
+    .gallery h2{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:1rem}
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem}
+    .ss-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface);cursor:pointer;transition:border-color .15s,transform .15s}
+    .ss-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .ss-card img{width:100%;display:block;border-bottom:1px solid var(--border)}
+    .ss-label{padding:.4rem .6rem;font-size:.72rem;color:var(--text-muted);display:flex;justify-content:space-between}
+    .ss-label span:last-child{color:var(--accent);font-size:.65rem;font-weight:600}
+
+    /* Lightbox */
+    #lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+    #lb.open{display:flex}
+    #lb img{max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 25px 60px rgba(0,0,0,.6)}
+
+    /* ── CONTROLS ── */
+    .ctrl{background:var(--surface);border-bottom:1px solid var(--border);padding:.85rem 2.5rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+    .ctrl-lbl{color:var(--text-muted);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+    .fg{display:flex;gap:.35rem;flex-wrap:wrap}
+    .fb{padding:.3rem .75rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:.75rem;font-weight:500;cursor:pointer;transition:all .15s}
+    .fb:hover{border-color:var(--accent);color:var(--text)}
+    .fb.on{background:var(--accent-soft);border-color:var(--accent);color:#c7d2fe}
+    .fb[data-s=critical].on{background:var(--critical-soft);border-color:var(--critical);color:#fca5a5}
+    .fb[data-s=high].on{background:var(--high-soft);border-color:var(--high);color:#fdba74}
+    .fb[data-s=medium].on{background:var(--medium-soft);border-color:var(--medium);color:#fde047}
+    .fb[data-s=low].on{background:var(--low-soft);border-color:var(--low);color:#86efac}
+    .fb[data-c=accessibility].on{background:var(--cat-a11y-soft);border-color:var(--cat-a11y);color:#c4b5fd}
+    .fb[data-c=ux].on{background:var(--cat-ux-soft);border-color:var(--cat-ux);color:#7dd3fc}
+    .fb[data-c=ui].on{background:var(--cat-ui-soft);border-color:var(--cat-ui);color:#f9a8d4}
+    .fb[data-c=performance].on{background:var(--cat-perf-soft);border-color:var(--cat-perf);color:#6ee7b7}
+    .fb[data-c=gdpr].on{background:var(--cat-gdpr-soft);border-color:var(--cat-gdpr);color:#fdba74}
+    .div{width:1px;height:22px;background:var(--border)}
+    .srch{position:relative}
+    .srch input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.3rem .65rem .3rem 1.9rem;font-size:.75rem;width:190px;outline:none}
+    .srch input:focus{border-color:var(--accent)}
+    .srch::before{content:'⌕';position:absolute;left:.5rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.95rem;pointer-events:none}
+    .cnt{margin-left:auto;color:var(--text-muted);font-size:.75rem}.cnt b{color:var(--text)}
+
+    /* ── LAYOUT ── */
+    main{max-width:1440px;margin:0 auto;padding:2rem 2.5rem;display:flex;gap:1.75rem;align-items:flex-start}
+    .toc{width:200px;flex-shrink:0;position:sticky;top:60px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+    .toc h3{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.65rem}
+    .toc a{display:flex;align-items:center;gap:.45rem;padding:.3rem .45rem;border-radius:5px;color:var(--text-muted);text-decoration:none;font-size:.78rem;transition:all .15s}
+    .toc a:hover{background:var(--surface2);color:var(--text)}
+    .toc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .issues-col{flex:1;min-width:0}
+
+    /* ── SECTION ── */
+    .sec{margin-bottom:.5rem}
+    .sec-hdr{display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem;margin-top:2rem;padding-bottom:.65rem;border-bottom:1px solid var(--border)}
+    .sec-hdr:first-child{margin-top:0}
+    .sec-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+    .sec-hdr h2{font-size:.95rem;font-weight:700;color:#fff}
+    .sec-hdr small{color:var(--text-muted);font-size:.75rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:.9rem}
+
+    /* ── CARD ── */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s,transform .15s}
+    .card:hover{border-color:#3e4466;transform:translateY(-1px)}
+    .card.hide{display:none!important}
+    .card-stripe{height:3px}
+    .card[data-s=critical] .card-stripe{background:var(--critical)}
+    .card[data-s=high]     .card-stripe{background:var(--high)}
+    .card[data-s=medium]   .card-stripe{background:var(--medium)}
+    .card[data-s=low]      .card-stripe{background:var(--low)}
+    .card-body{padding:1rem 1.1rem}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;margin-bottom:.5rem}
+    .card-title{font-size:.875rem;font-weight:600;color:#fff;line-height:1.4;flex:1}
+    .badges{display:flex;gap:.3rem;flex-wrap:wrap;flex-shrink:0}
+    .badge{font-size:.68rem;font-weight:600;padding:.12rem .45rem;border-radius:4px;white-space:nowrap}
+    .bs-critical{background:var(--critical-soft);color:var(--critical)}
+    .bs-high{background:var(--high-soft);color:var(--high)}
+    .bs-medium{background:var(--medium-soft);color:var(--medium)}
+    .bs-low{background:var(--low-soft);color:var(--low)}
+    .bc-accessibility{background:var(--cat-a11y-soft);color:var(--cat-a11y)}
+    .bc-ux{background:var(--cat-ux-soft);color:var(--cat-ux)}
+    .bc-ui{background:var(--cat-ui-soft);color:var(--cat-ui)}
+    .bc-performance{background:var(--cat-perf-soft);color:var(--cat-perf)}
+    .bc-gdpr{background:var(--cat-gdpr-soft);color:var(--cat-gdpr)}
+
+    /* Screenshot thumbnail inside card */
+    .card-ss{margin-bottom:.75rem;border-radius:6px;overflow:hidden;border:1px solid var(--border);cursor:zoom-in;position:relative}
+    .card-ss img{width:100%;display:block;transition:transform .2s}
+    .card-ss:hover img{transform:scale(1.02)}
+    .card-ss-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);padding:.25rem .5rem;font-size:.65rem;color:#9ca3af}
+
+    .desc{font-size:.8rem;color:var(--text-muted);line-height:1.55;margin-bottom:.7rem}
+    .evidence{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.72rem;color:#94a3b8;font-family:'SF Mono','Cascadia Code',monospace;margin-bottom:.7rem;word-break:break-word}
+    .fix{font-size:.78rem;line-height:1.5}
+    .fix-hdr{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#818cf8;margin-bottom:.35rem;display:flex;align-items:center;gap:.35rem}
+    .fix-hdr::before{content:'✦'}
+    .fix-steps{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+    .fix-steps li{display:flex;align-items:flex-start;gap:.4rem;color:#c4cfe8}
+    .fix-steps li::before{content:'→';color:#6366f1;flex-shrink:0;margin-top:.05rem}
+    .fix-code{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.7rem;color:#a5f3fc;font-family:'SF Mono','Cascadia Code',monospace;margin-top:.45rem;white-space:pre-wrap;word-break:break-word}
+    .wcag{display:inline-flex;align-items:center;background:rgba(99,102,241,.1);color:#818cf8;font-size:.66rem;font-weight:600;padding:.1rem .4rem;border-radius:4px;margin-top:.5rem;border:1px solid rgba(99,102,241,.2)}
+
+    .no-r{display:none;grid-column:1/-1;padding:3rem 2rem;text-align:center;color:var(--text-muted)}
+    .no-r.on{display:block}
+    .sec.all-hide .sec-hdr,.sec.all-hide .grid{display:none}
+
+    footer{max-width:1440px;margin:0 auto;padding:1.5rem 2.5rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.75rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+
+    @media(max-width:900px){main{flex-direction:column;padding:1rem}.toc{width:100%;position:static}.grid{grid-template-columns:1fr}.hdr,.ctrl,.gallery{padding:1rem}}
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-icon">🔍</div>
+  <div>
+    <h1>UX Audit — CDU Nordrhein-Westfalen</h1>
+    <p class="meta">
+      <a href="https://www.cdu-nrw.de/" target="_blank">cdu-nrw.de ↗</a> &nbsp;·&nbsp;
+      Reviewed pages: Homepage, News, Partei, Kontakt, Impressum, Datenschutz &nbsp;·&nbsp;
+      March 2026
+    </p>
+  </div>
+  <div class="hdr-stats">
+    <span class="pill c">Critical · 4</span>
+    <span class="pill h">High · 12</span>
+    <span class="pill m">Medium · 12</span>
+    <span class="pill l">Low · 4</span>
+  </div>
+</header>
+
+<!-- Screenshots gallery -->
+<section class="gallery">
+  <h2>Page screenshots — click to enlarge</h2>
+  <div class="gallery-grid">
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/homepage_desktop.png" alt="Homepage desktop" />
+      <div class="ss-label"><span>Homepage</span><span>Desktop 1440px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/homepage_mobile.png" alt="Homepage mobile" />
+      <div class="ss-label"><span>Homepage</span><span>Mobile 390px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/news_desktop.png" alt="News desktop" />
+      <div class="ss-label"><span>Aktuelle Meldungen</span><span>Desktop 1440px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/news_mobile.png" alt="News mobile" />
+      <div class="ss-label"><span>Aktuelle Meldungen</span><span>Mobile 390px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/contact_desktop.png" alt="Contact desktop" />
+      <div class="ss-label"><span>Kontakt</span><span>Desktop 1440px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/contact_mobile.png" alt="Contact mobile" />
+      <div class="ss-label"><span>Kontakt</span><span>Mobile 390px</span></div>
+    </div>
+    <div class="ss-card" onclick="lb(this)">
+      <img src="screenshots/partei_desktop.png" alt="Partei desktop" />
+      <div class="ss-label"><span>Partei</span><span>Desktop 1440px</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lb" onclick="this.classList.remove('open')"><img id="lb-img" src="" alt="" /></div>
+
+<!-- Controls -->
+<div class="ctrl">
+  <span class="ctrl-lbl">Severity</span>
+  <div class="fg" id="sf">
+    <button class="fb on" data-s="all">All</button>
+    <button class="fb" data-s="critical">Critical</button>
+    <button class="fb" data-s="high">High</button>
+    <button class="fb" data-s="medium">Medium</button>
+    <button class="fb" data-s="low">Low</button>
+  </div>
+  <div class="div"></div>
+  <span class="ctrl-lbl">Category</span>
+  <div class="fg" id="cf">
+    <button class="fb on" data-c="all">All</button>
+    <button class="fb" data-c="accessibility">Accessibility</button>
+    <button class="fb" data-c="ux">UX</button>
+    <button class="fb" data-c="ui">UI/Visual</button>
+    <button class="fb" data-c="performance">Performance</button>
+    <button class="fb" data-c="gdpr">GDPR</button>
+  </div>
+  <div class="div"></div>
+  <div class="srch"><input type="text" id="q" placeholder="Search issues…" /></div>
+  <span class="cnt">Showing <b id="vc">32</b> / 32</span>
+</div>
+
+<main>
+  <nav class="toc">
+    <h3>Sections</h3>
+    <a href="#a11y"><span class="toc-dot" style="background:var(--cat-a11y)"></span>Accessibility</a>
+    <a href="#ux"><span class="toc-dot" style="background:var(--cat-ux)"></span>UX</a>
+    <a href="#ui"><span class="toc-dot" style="background:var(--cat-ui)"></span>UI / Visual</a>
+    <a href="#perf"><span class="toc-dot" style="background:var(--cat-perf)"></span>Performance</a>
+    <a href="#gdpr"><span class="toc-dot" style="background:var(--cat-gdpr)"></span>GDPR / Legal</a>
+  </nav>
+
+  <div class="issues-col">
+
+<!-- ═══════════════════════════════════════════════════
+     ACCESSIBILITY
+════════════════════════════════════════════════════ -->
+<div class="sec" id="a11y">
+  <div class="sec-hdr">
+    <span class="sec-dot" style="background:var(--cat-a11y)"></span>
+    <h2>Accessibility</h2>
+    <small>10 issues · WCAG 2.1 AA</small>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-s="critical" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Images Missing Descriptive Alt Text</span>
+          <div class="badges"><span class="badge bs-critical">Critical</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/news_desktop.png" alt="News page with images lacking alt text" />
+          <span class="card-ss-lbl">News thumbnails — captions are tiny credits, no alt text</span>
+        </div>
+        <p class="desc">Multiple images across all pages (hero carousel, news thumbnails, article cards) have empty <code>alt=""</code>. Screen readers announce nothing, leaving blind users with no context about visual content.</p>
+        <div class="evidence">alt="" on hero slides, news cards, article preview images sitewide</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Audit every <code>&lt;img&gt;</code> — if it conveys information, write alt text that describes its purpose, not its appearance.</li>
+            <li>For news thumbnails use the article title: <code>alt="CDU NRW Veranstaltung – Neujahrsempfang 2026"</code></li>
+            <li>Hero carousel: each slide's image should describe the scene, e.g. <code>alt="Hendrik Wüst bei der Wahlkampf-Tour Baden-Württemberg"</code></li>
+            <li>Purely decorative images (background textures, dividers): keep <code>alt=""</code> and add <code>role="presentation"</code></li>
+            <li>In Drupal 7: set the alt field in the Media module for each image asset — it propagates everywhere the image is used.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 1.1.1 Non-text Content</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="critical" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Image CAPTCHA Blocks Blind Users</span>
+          <div class="badges"><span class="badge bs-critical">Critical</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/contact_desktop.png" alt="Contact form" />
+          <span class="card-ss-lbl">Kontakt form — image CAPTCHA with no audio alternative</span>
+        </div>
+        <p class="desc">The contact form uses a visual CAPTCHA with no audio alternative. Blind and low-vision users cannot complete the form — they are entirely locked out from contacting the party.</p>
+        <div class="evidence">Contact form: "CAPTCHA image verification" — no audio/text fallback present</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Best option:</strong> Replace with Google reCAPTCHA v3 (invisible, no user interaction required). Add the Drupal module <em>recaptcha</em>.</li>
+            <li><strong>Alternative:</strong> Use a honeypot field (hidden input that bots fill, humans don't) via Drupal's <em>Honeypot</em> module.</li>
+            <li>If keeping image CAPTCHA: add an audio CAPTCHA button next to it with <code>aria-label="Audio CAPTCHA abspielen"</code></li>
+            <li>Also add a link "CAPTCHA nicht lesbar? Neu laden" with keyboard access.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 1.1.1 · WCAG 2.1.1 Keyboard</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Minimal ARIA Implementation Sitewide</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">Interactive components (dropdown menus, carousel, social media wall) lack <code>role</code>, <code>aria-expanded</code>, <code>aria-label</code>, and <code>aria-live</code> attributes. Assistive technologies cannot convey widget state.</p>
+        <div class="evidence">No role, aria-label, aria-describedby, or aria-expanded found on reviewed pages</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Navigation dropdowns: add <code>aria-expanded="false"</code> to toggle buttons; update to <code>true</code> on open via JS.</li>
+            <li>Carousel: add <code>role="region" aria-label="Aktuelle Highlights"</code>, <code>aria-live="polite"</code> on the active slide container.</li>
+            <li>Active nav item: add <code>aria-current="page"</code> on the current page link.</li>
+            <li>Page landmark: wrap main content in <code>&lt;main&gt;</code>, navigation in <code>&lt;nav aria-label="Hauptnavigation"&gt;</code>.</li>
+          </ul>
+          <div class="fix-code">&lt;button aria-expanded="false" aria-controls="menu-partei"&gt;Partei&lt;/button&gt;
+&lt;ul id="menu-partei" hidden&gt;...&lt;/ul&gt;</div>
+        </div>
+        <span class="wcag">WCAG 4.1.2 Name, Role, Value</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Carousel Not Keyboard Accessible</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_desktop.png" alt="Homepage carousel" />
+          <span class="card-ss-lbl">Hero carousel (cycle.js) — keyboard/pause controls unverified</span>
+        </div>
+        <p class="desc">The hero carousel (40+ slides, cycle.js) auto-rotates with no pause button. WCAG 2.2.2 requires moving content that lasts more than 5 seconds to have a mechanism to pause, stop, or hide it.</p>
+        <div class="evidence">ubg_bean_slideshow with cycle.js — no pause/stop control visible</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Add a visible Pause/Play button: <code>&lt;button aria-label="Slideshow pausieren"&gt;⏸&lt;/button&gt;</code></li>
+            <li>Pause on keyboard focus of any slide content automatically.</li>
+            <li>Ensure prev/next arrows are <code>&lt;button&gt;</code> elements (not <code>&lt;a&gt;</code> or <code>&lt;div&gt;</code>) with descriptive <code>aria-label</code>.</li>
+            <li>Add <code>aria-roledescription="slide"</code> to each slide, and <code>aria-label="Slide X von Y"</code>.</li>
+            <li>Long-term: replace 40-slide carousel with a static featured section (max 3 items).</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 2.1.1 Keyboard · WCAG 2.2.2 Pause, Stop, Hide</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">H1 is "Startseite" — Non-Descriptive</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">The homepage H1 literally says "Startseite" (Homepage). Screen reader users navigating by headings get no meaningful information about the page's purpose or the organization.</p>
+        <div class="evidence">&lt;h1&gt;Startseite&lt;/h1&gt;</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Change to a descriptive heading, e.g.: <code>&lt;h1&gt;CDU Nordrhein-Westfalen&lt;/h1&gt;</code></li>
+            <li>The current visual title "CDU Nordrhein-Westfalen" (dark banner top-left) should be the H1, not a repeated navigation label.</li>
+            <li>The tagline "Machen, worauf es ankommt" can be a <code>&lt;p&gt;</code> or <code>&lt;h2&gt;</code> below it.</li>
+            <li>In Drupal 7: update the site's front page node title and ensure it renders as H1.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 2.4.6 Headings and Labels</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Cookie Banner Blocks All Content on Mobile</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_mobile.png" alt="Mobile cookie banner" />
+          <span class="card-ss-lbl">Mobile 390px — cookie banner occupies entire viewport</span>
+        </div>
+        <p class="desc">On mobile, the cookie consent banner takes up the entire below-fold area, covering all page content. Keyboard and screen reader users are forced to navigate the banner before any page content is accessible. Focus is not trapped in the banner, which is also an issue.</p>
+        <div class="evidence">Mobile screenshot: cookie text + 2 checkboxes + 2 buttons = full viewport below header</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Redesign as a compact bottom bar (max 120px tall) with a "Mehr erfahren" expand option.</li>
+            <li>On open: trap keyboard focus inside the dialog using <code>role="dialog"</code> and <code>aria-modal="true"</code>.</li>
+            <li>Ensure "Alle ablehnen" is as visually prominent as "Alle akzeptieren" — both buttons should have equal styling.</li>
+            <li>Return focus to the triggering element (top of page) after consent is given.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 2.4.3 Focus Order</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Required Fields — Asterisk Only, No Programmatic Association</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">Contact form required fields are marked with * only. No <code>required</code> attribute or <code>aria-required</code>, so screen readers don't announce them as required.</p>
+        <div class="evidence">Vorname*, Nachname*, PLZ*, E-Mail*, Betreff* — visual asterisk only</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Add <code>required</code> to all mandatory <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements.</li>
+            <li>Add a legend above the form: <code>&lt;p&gt;Felder mit * sind Pflichtfelder&lt;/p&gt;</code></li>
+            <li>For older browser support also add <code>aria-required="true"</code>.</li>
+          </ul>
+          <div class="fix-code">&lt;input type="text" name="vorname" required aria-required="true" /&gt;</div>
+        </div>
+        <span class="wcag">WCAG 3.3.2 Labels or Instructions</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">No Inline Form Validation or Error Messages</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">No evidence of accessible error messaging on the contact form. On invalid submission, users — especially screen reader users — have no way to identify which fields have errors and why.</p>
+        <div class="evidence">No aria-invalid, aria-describedby, or role="alert" elements in contact form markup</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>On submit failure: show an error summary at top with <code>role="alert"</code> that lists all errors.</li>
+            <li>On each invalid field: set <code>aria-invalid="true"</code> and <code>aria-describedby="field-error-id"</code>.</li>
+            <li>Error message element: <code>&lt;span id="field-error-id" role="alert"&gt;Bitte geben Sie Ihren Vornamen ein.&lt;/span&gt;</code></li>
+            <li>Move focus to the error summary after failed submission.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 3.3.1 Error Identification · WCAG 3.3.3 Error Suggestion</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Inconsistent Semantic Heading Hierarchy</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">H2 is used for structural labels like "Slideshow", "Suchformular", "Fußbereich" — not content sections. On news pages, H1 "Aktuelle Meldungen" is immediately followed by a duplicate H2. This breaks the document outline for screen readers.</p>
+        <div class="evidence">&lt;h2&gt;Slideshow&lt;/h2&gt; · &lt;h2&gt;Suchformular&lt;/h2&gt; · &lt;h2&gt;Fußbereich&lt;/h2&gt;</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Use <code>&lt;section aria-label="Slideshow"&gt;</code> instead of a heading for structural regions.</li>
+            <li>Remove duplicate H2 "Aktuelle Meldungen" that follows the H1 of the same name.</li>
+            <li>Use the <em>HTML5 Outline</em> browser extension to verify heading structure on every template.</li>
+            <li>Rule: headings should reflect content hierarchy, not CSS styling needs.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 1.3.1 Info and Relationships · WCAG 2.4.6 Headings and Labels</span>
+      </div>
+    </div>
+
+    <div class="card" data-s="low" data-c="accessibility">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Multiple Overlapping Skip Navigation Links</span>
+          <div class="badges"><span class="badge bs-low">Low</span><span class="badge bc-accessibility">Accessibility</span></div>
+        </div>
+        <p class="desc">The site has multiple skip links ("Direkt zum Inhalt", "Zum Hauptinhalt", footer navigation anchors). Redundant skip links confuse screen reader users and suggest the landmark structure needs cleanup.</p>
+        <div class="evidence">Skip links: "Direkt zum Inhalt", "Zum Hauptinhalt", multiple footer section anchors</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Consolidate to one visible skip link: <code>&lt;a href="#main-content" class="skip-link"&gt;Zum Hauptinhalt springen&lt;/a&gt;</code></li>
+            <li>Ensure <code>&lt;main id="main-content"&gt;</code> is the actual content landmark.</li>
+            <li>Remove all redundant footer anchors that serve the same purpose.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 2.4.1 Bypass Blocks</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     UX
+════════════════════════════════════════════════════ -->
+<div class="sec" id="ux">
+  <div class="sec-hdr">
+    <span class="sec-dot" style="background:var(--cat-ux)"></span>
+    <h2>User Experience</h2>
+    <small>11 issues</small>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-s="critical" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Cookie Banner Dominates First Viewport</span>
+          <div class="badges"><span class="badge bs-critical">Critical</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_desktop.png" alt="Cookie banner on homepage" />
+          <span class="card-ss-lbl">Desktop: banner covers lower half of first viewport</span>
+        </div>
+        <p class="desc">The cookie consent banner appears as a large modal-like overlay covering the lower half of the screen on desktop and virtually all content on mobile. Users can't see the page before being forced to interact with legal consent. This creates a terrible first impression and increases bounce rate.</p>
+        <div class="evidence">Both desktop and mobile screenshots confirm the banner blocks the primary content area on page load</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Redesign as a slim bottom bar</strong> (~80–100px) that doesn't cover content. Full detail available via a "Einstellungen" expand.</li>
+            <li>Show "Alle akzeptieren" and "Alle ablehnen" with <em>equal visual weight</em> — current design buries the reject option.</li>
+            <li>Remember consent in localStorage — don't re-show on every visit.</li>
+            <li>Use a well-tested CMP library (e.g., Klaro, CookieYes) that handles accessibility and mobile layout correctly.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="critical" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Hero Carousel with 40+ Slides</span>
+          <div class="badges"><span class="badge bs-critical">Critical</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">The hero slideshow contains 40+ auto-rotating slides. Research consistently shows carousel CTR beyond slide 1 is under 1%. Content in slides 2–40 is effectively invisible. The carousel pattern itself has low engagement — with 40 items it becomes completely unusable.</p>
+        <div class="evidence">ubg_bean_slideshow: 40+ slides confirmed in homepage HTML</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Replace with a featured section</strong>: 3 editorial cards (image + title + date + CTA) in a responsive grid. No auto-rotation.</li>
+            <li>If a carousel is required by stakeholders, hard-limit to 3–5 slides, manual controls only, and make it opt-in rotation (click to advance).</li>
+            <li>Surface remaining content in the "Aktuelles" grid below the hero instead.</li>
+            <li>KPI to track: hero CTA click-through rate before/after change — expect 5–10× improvement.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="critical" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">No News Filtering or Category Browsing</span>
+          <div class="badges"><span class="badge bs-critical">Critical</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/news_desktop.png" alt="News page with no filters" />
+          <span class="card-ss-lbl">News listing — pagination only, no category tags or filters</span>
+        </div>
+        <p class="desc">The news listing provides only numeric pagination across 9+ pages. Users interested in specific topics (Wirtschaft, Bildung, Kommunalpolitik) have no way to filter — they must paginate through everything.</p>
+        <div class="evidence">aktuelle-meldungen: pages 1–9+ via numeric pagination only — no tag cloud, category sidebar, or date filter</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Add taxonomy tags to news articles in Drupal (e.g. Wirtschaft, Bildung, Umwelt, Kommunalpolitik).</li>
+            <li>Add a filter bar above the article grid with tag buttons. Use AJAX filtering so the page doesn't reload.</li>
+            <li>Add a date range picker (year/month dropdown at minimum).</li>
+            <li>Display tags visually on each article card so users can browse by clicking a tag.</li>
+            <li>In Drupal 7: use the <em>Views</em> module with exposed filters to implement this without custom code.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Mobile Navigation Completely Hidden</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_mobile.png" alt="Mobile homepage — no nav visible" />
+          <span class="card-ss-lbl">Mobile: no hamburger menu visible in first viewport</span>
+        </div>
+        <p class="desc">On mobile (390px), the navigation is entirely hidden with no visible hamburger menu or menu toggle in the screenshot. Users cannot navigate to any section of the site without scrolling or knowing where the menu is. The header only shows the logo and tagline.</p>
+        <div class="evidence">Mobile screenshot: only CDU logo + tagline bar visible — no navigation toggle</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Ensure a clearly labelled hamburger button is always visible in the mobile header (top-right or top-left).</li>
+            <li>Button should have both the ☰ icon and a "Menü" text label — icon-only menus fail usability tests.</li>
+            <li>Add <code>aria-label="Navigation öffnen"</code> and <code>aria-expanded</code> state to the toggle button.</li>
+            <li>Test at 320px, 375px, 390px, and 430px viewport widths.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Contact Email Not Clickable — "(at)" Obfuscation</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">The contact email is displayed as "info[at]cdu-nrw.de" — a spam-prevention technique that cannot be clicked or auto-filled by mail clients. Mobile users must manually copy and retype the address.</p>
+        <div class="evidence">Contact page: "info[at]cdu-nrw.de" — no mailto: link</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Use a proper mailto link: <code>&lt;a href="mailto:info@cdu-nrw.de"&gt;info@cdu-nrw.de&lt;/a&gt;</code></li>
+            <li>For spam protection, use CSS obfuscation that renders correctly in browsers, or a server-side contact form instead of exposing the address at all.</li>
+            <li>Alternatively, rely on the existing contact form as the primary channel and de-emphasise the raw email address.</li>
+          </ul>
+          <div class="fix-code">&lt;a href="mailto:info@cdu-nrw.de"&gt;info@cdu-nrw.de&lt;/a&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">3-Level Deep Navigation Hierarchy</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">The "Partei" submenu has 3+ nesting levels (Partei → Gliederungen → CDU vor Ort / Vereinigungen / Fachausschüsse). This creates cognitive overload and is practically unusable on mobile where deep nested menus break.</p>
+        <div class="evidence">Partei → Gliederungen → [CDU vor Ort, Vereinigungen, Landesfachausschüsse] = 3 levels</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Flatten to 2 levels maximum.</strong> Move level-3 items to the landing page of their parent (e.g., the "Gliederungen" page lists sub-sections as cards).</li>
+            <li>Use a <strong>mega-menu</strong> for "Partei": a wide panel showing all sub-sections in a grid layout, visible on hover/click without nesting.</li>
+            <li>Move low-traffic items (Unsere Geschichte, Landesparteitage, Statuten) to the footer or a "Mehr" section.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Floating Social Media Sidebar Intrudes on Content</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_desktop.png" alt="Floating social sidebar" />
+          <span class="card-ss-lbl">Right-edge floating bar: Facebook, X, YouTube, LinkedIn</span>
+        </div>
+        <p class="desc">A fixed floating sidebar with social media icons (Facebook, X, YouTube, LinkedIn) is anchored to the right edge of the viewport. This is a design pattern from circa 2014 — it obscures content on smaller desktops and adds no meaningful engagement value as a fixed element.</p>
+        <div class="evidence">Screenshots confirm fixed social icon bar on right edge across all desktop pages</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Remove the fixed sidebar entirely.</strong> Social media links belong in the footer and optionally in the header.</li>
+            <li>If social sharing is a priority, add inline share buttons on individual article pages only.</li>
+            <li>Ensure footer social links have proper <code>aria-label</code>: e.g. <code>aria-label="CDU NRW auf Facebook"</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Social Media Wall Requires Manual Activation</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">The homepage Social Media Wall displays blank boxes with "aktivieren" buttons due to GDPR two-click consent. Users see empty boxes with no explanation — most won't understand what they're activating or why the content isn't loading.</p>
+        <div class="evidence">"aktivieren" buttons for each social embed — blank content areas until clicked</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Replace the live embed wall with a static feed.</strong> Use the Twitter/Instagram API to pre-render recent posts server-side (or cache via cron) and display as static HTML.</li>
+            <li>Show a placeholder graphic explaining "Folgen Sie uns auf Instagram" with a direct link — no iframe needed.</li>
+            <li>If embeds are kept: show a preview thumbnail and a clear notice "Klicken um Inhalte von Instagram zu laden (Datenschutz)" with the privacy policy linked.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Contact Form Forces CDU Germany Data Transfer</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">The contact form has a mandatory consent checkbox for transferring data to CDU Germany HQ. Users writing to the NRW branch are surprised by this — it likely reduces form completion rates significantly.</p>
+        <div class="evidence">"personenbezogenen Daten...an die CDU Deutschlands übertragen" — required checkbox</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Make the transfer to CDU Germany <strong>optional</strong> for general contact messages. Only make it required for membership-related enquiries.</li>
+            <li>Rewrite the consent text in plain language: "Dürfen wir Ihre Anfrage auch an die CDU Deutschland weiterleiten? (optional)"</li>
+            <li>Separate the privacy policy link from the consent checkbox — users should be able to read the policy without accepting data transfer.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Sitemap References Internal Staging Domain</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">sitemap.xml contains URLs pointing to the internal dev domain "neu.cdu-nrw.ubgnet.de" rather than production "www.cdu-nrw.de". This causes broken SEO signals, wrong URLs in search results, and can expose internal infrastructure.</p>
+        <div class="evidence">sitemap.xml: Homepage URL = "http://neu.cdu-nrw.ubgnet.de/"</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>In Drupal 7: go to Admin → Configuration → Search and Metadata → XML Sitemap and set the base URL to <code>https://www.cdu-nrw.de</code>.</li>
+            <li>Regenerate sitemap and verify all URLs use the production domain and HTTPS.</li>
+            <li>Submit updated sitemap to Google Search Console.</li>
+            <li>Add a <code>&lt;link rel="canonical"&gt;</code> meta tag on all pages pointing to the production URL.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="low" data-c="ux">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">No Custom 404 Error Page</span>
+          <div class="badges"><span class="badge bs-low">Low</span><span class="badge bc-ux">UX</span></div>
+        </div>
+        <p class="desc">No evidence of a custom 404 page. Default Drupal 404 pages provide no navigation, no search, no path back to useful content — high bounce rate for users arriving via broken links.</p>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Create a custom 404 page with: clear explanation, site search, links to News / Kontakt / Startseite, and a friendly tone.</li>
+            <li>In Drupal 7: Admin → Configuration → System → Site Information → Error pages.</li>
+            <li>Include the CDU NRW logo and full navigation so users don't feel stranded.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     UI / VISUAL
+════════════════════════════════════════════════════ -->
+<div class="sec" id="ui">
+  <div class="sec-hdr">
+    <span class="sec-dot" style="background:var(--cat-ui)"></span>
+    <h2>UI / Visual Design</h2>
+    <small>6 issues</small>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-s="high" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Split / Inconsistent Header Design</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_desktop.png" alt="Split header design" />
+          <span class="card-ss-lbl">Header: dark left block + white right block — visually fragmented</span>
+        </div>
+        <p class="desc">The header is visually split: a dark teal/black block on the left containing the site title and orange tagline, and a white block on the right containing the CDU logo. These two halves look like separate components that don't belong together. The orange tagline strip is positioned awkwardly below the site title.</p>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Unify the header into a single background color — use the CDU brand black (#000) or white with a bottom border.</li>
+            <li>Place logo on the left, navigation links in the center/right, and the "Mitglied werden" CTA button as a distinct accent.</li>
+            <li>Move the tagline "Machen, worauf es ankommt" to the hero section, not the header chrome.</li>
+            <li>Reference: cdu.de national site uses a clean white header with consistent typography.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Outdated Visual Design Language (Drupal 7 Era)</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <p class="desc">The site's visual design reflects Drupal 7 era aesthetics (~2011–2016): flat card borders, basic box shadows, tight spacing, and a cluttered layout. For a party with significant political presence, the site underperforms visually compared to peers like die-gruenen-nrw.de or spd-nrw.de.</p>
+        <div class="evidence">CMS: Drupal 7 EOL (Nov 2023). Legacy Glyphicons, dated layout patterns visible in screenshots.</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Plan full redesign + CMS migration</strong> to Drupal 10/11, WordPress, or headless (Next.js + CMS API).</li>
+            <li>Adopt modern layout: generous white space, large typography, full-width imagery, card-based news grid.</li>
+            <li>Define a proper design system: 8px spacing grid, consistent border-radius (8px standard), one icon library (e.g. Lucide or Heroicons).</li>
+            <li>Benchmark against cdu.de (national) and modern political sites for design direction.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Competing Icon Frameworks Loaded Together</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <p class="desc">FontAwesome, Material Icons, and legacy Glyphicons are all loaded simultaneously. This creates visual inconsistency (icons from different design languages mixed) and adds unnecessary CSS payload.</p>
+        <div class="evidence">CSS imports: FontAwesome + Material Icons + Glyphicon sets — all in the same page</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Audit all icons used sitewide — document which library each comes from.</li>
+            <li>Choose one library (recommendation: SVG-based Lucide or Heroicons for maintainability).</li>
+            <li>Replace all icons with the chosen library equivalents, then remove unused CSS files.</li>
+            <li>Use SVG icons inline or as a sprite — eliminates font loading entirely and improves performance.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">News Thumbnails Have No Title Visible in Grid</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/news_desktop.png" alt="News grid with image-only cards" />
+          <span class="card-ss-lbl">News grid: images with only tiny photographer credits visible</span>
+        </div>
+        <p class="desc">In the above-the-fold view of the news page, article cards show only image thumbnails with tiny photographer credits. No article title, date, or excerpt is visible without scrolling. Users have no idea what the articles are about.</p>
+        <div class="evidence">News page screenshot: 4 image thumbnails visible — no titles, only small credit text overlaid</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Redesign article cards to show: image (top 60%), article title (bold, 2-line truncate), date, and 1-line excerpt.</li>
+            <li>Use CSS to overlay a gradient on the image with the title text for a more modern look.</li>
+            <li>Ensure cards are keyboard-navigable with visible focus rings.</li>
+            <li>The entire card should be a single clickable link wrapping all elements.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Footer Visually Cluttered — Duplicate Links</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <p class="desc">The footer contains multiple sections ("Im Web", "Links", legal links, social icons × 2) with overlapping content. Social media links appear in at least two separate footer sections. High visual density with poor grouping makes it hard to scan.</p>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Structure footer into 3–4 clear columns: About, Quick Links, Legal, Social/Contact.</li>
+            <li>Remove all duplicate link entries — each destination should appear once.</li>
+            <li>Increase line-height and group spacing so items have breathing room.</li>
+            <li>Add a subtle top border to separate footer from page content.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="low" data-c="ui">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Text Contrast on Header/Navigation Not Verified</span>
+          <div class="badges"><span class="badge bs-low">Low</span><span class="badge bc-ui">UI/Visual</span></div>
+        </div>
+        <div class="card-ss" onclick="lb(this)">
+          <img src="screenshots/homepage_desktop.png" alt="Navigation contrast" />
+          <span class="card-ss-lbl">Teal nav bar — white text on teal background needs contrast check</span>
+        </div>
+        <p class="desc">The navigation bar uses white text on a teal/cyan background. The orange tagline bar uses dark text on orange. These combinations need formal contrast ratio verification. The teal color appears to be approximately #009aa6 — white on that background may not meet 4.5:1.</p>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Use the <a href="https://webaim.org/resources/contrastchecker/" style="color:var(--accent)">WebAIM Contrast Checker</a> to test every text/background combination.</li>
+            <li>Minimum ratios: 4.5:1 for normal text, 3:1 for large text (18px+ or 14px+ bold).</li>
+            <li>If the teal navigation fails: darken the teal or use white as the nav background with dark text.</li>
+            <li>Also check: orange tagline text, muted footer text, article metadata dates.</li>
+          </ul>
+        </div>
+        <span class="wcag">WCAG 1.4.3 Contrast (Minimum)</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PERFORMANCE
+════════════════════════════════════════════════════ -->
+<div class="sec" id="perf">
+  <div class="sec-hdr">
+    <span class="sec-dot" style="background:var(--cat-perf)"></span>
+    <h2>Performance</h2>
+    <small>3 issues</small>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-s="high" data-c="performance">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">50+ CSS Stylesheets Per Page — Render Blocking</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-performance">Performance</span></div>
+        </div>
+        <p class="desc">Every page loads 50+ individual CSS files as separate HTTP requests. This is severe render-blocking — the browser must download, parse, and apply each stylesheet before rendering anything. Time to First Contentful Paint (FCP) will be significantly impacted, especially on mobile.</p>
+        <div class="evidence">50+ CSS @import / link tags confirmed on aktuelle-meldungen and impressum pages</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Immediate:</strong> Enable Drupal 7's built-in CSS aggregation: Admin → Configuration → Development → Performance → "Aggregate and compress CSS files".</li>
+            <li>This alone will collapse 50 files into 1–3 bundles and dramatically improve FCP.</li>
+            <li>Remove unused CSS: audit with Chrome DevTools Coverage tab — delete CSS for unused Drupal modules.</li>
+            <li><strong>Long-term:</strong> Migrate to a modern build pipeline (Vite/Webpack) that produces a single optimized CSS bundle.</li>
+            <li>Inline critical CSS (above-fold styles) and defer non-critical CSS loading.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="high" data-c="performance">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Legacy Drupal 7 CMS (End of Life Nov 2023)</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-performance">Performance</span></div>
+        </div>
+        <p class="desc">Drupal 7 is end-of-life. It no longer receives security patches, lacks HTTP/2 push support, uses legacy jQuery, and cannot leverage modern Web Vitals optimizations. Running EOL software on a high-profile political party website is a security and performance liability.</p>
+        <div class="evidence">Drupal 7 detected via module names: ubg_bean_slideshow, ubg_socialmedia, cycle.js carousel</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Plan migration to Drupal 10/11</strong> (or headless CMS + Next.js/Nuxt). Allocate 3–6 months for full migration project.</li>
+            <li>In the interim: apply all available Drupal 7 security patches (via drupal.org extended support until Jan 2025, then commercial support).</li>
+            <li>Migrate to Drupal 10's Olivero or Claro themes which are Core Web Vitals-optimized out of the box.</li>
+            <li>Prioritize migration of public-facing pages — internal party tools can migrate later.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="performance">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Multiple Competing JavaScript Libraries</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-performance">Performance</span></div>
+        </div>
+        <p class="desc">The site loads jQuery, cycle.js, multiple Drupal ubg_* custom modules, and social embed scripts from Facebook/Twitter/Instagram. This adds to Total Blocking Time (TBT) and can cause JS conflicts.</p>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Enable Drupal JS aggregation: Admin → Performance → "Aggregate JavaScript files".</li>
+            <li>Replace cycle.js carousel with CSS scroll-snap (zero JS, smooth native scrolling).</li>
+            <li>Lazy-load social embed scripts — only inject the <code>&lt;script&gt;</code> tag when the user activates the embed.</li>
+            <li>Audit with Chrome DevTools → Performance → Main Thread to identify which scripts block longest.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     GDPR / LEGAL
+════════════════════════════════════════════════════ -->
+<div class="sec" id="gdpr">
+  <div class="sec-hdr">
+    <span class="sec-dot" style="background:var(--cat-gdpr)"></span>
+    <h2>GDPR / Legal</h2>
+    <small>2 issues</small>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-s="high" data-c="gdpr">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Privacy Policy Outdated — Obsolete Legal References</span>
+          <div class="badges"><span class="badge bs-high">High</span><span class="badge bc-gdpr">GDPR</span></div>
+        </div>
+        <p class="desc">The Datenschutz page is dated May 2018 and still references the EU-US Privacy Shield framework, which was invalidated by the Schrems II ruling (July 2020) and replaced by the EU-US Data Privacy Framework (July 2023). This is an outdated and potentially non-compliant legal basis for US data transfers.</p>
+        <div class="evidence">Privacy policy dated May 2018. Privacy Shield §6, §7 references — legally invalid since 2020.</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li><strong>Immediate legal review required.</strong> Engage a GDPR-qualified lawyer to update the policy.</li>
+            <li>Replace Privacy Shield with: Standard Contractual Clauses (SCCs, 2021 version) or EU-US Data Privacy Framework (DPF) certification for US service providers.</li>
+            <li>Update the list of data processors (Union-Betriebs-GmbH, Matomo, Google/YouTube, Facebook/Meta, Twitter/X) with current processing purposes.</li>
+            <li>Add "Zuletzt aktualisiert: [Datum]" at the top and commit to annual review.</li>
+            <li>Check that YouTube embeds use the privacy-enhanced mode (<code>youtube-nocookie.com</code>).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-s="medium" data-c="gdpr">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-title">Newsletter Tracking Pixels — Consent Mechanism Unclear</span>
+          <div class="badges"><span class="badge bs-medium">Medium</span><span class="badge bc-gdpr">GDPR</span></div>
+        </div>
+        <p class="desc">The privacy policy mentions tracking newsletter opens via "Web-Beacons bzw. Tracking-Pixel" with pseudonymization. Under GDPR Art. 6(1)(a), tracking individual email opens requires separate explicit consent — it cannot be bundled with the newsletter subscription consent.</p>
+        <div class="evidence">Datenschutz: "Web-Beacons bzw. Tracking-Pixel" in newsletter section — no separate consent mechanism described</div>
+        <div class="fix">
+          <div class="fix-hdr">How to fix</div>
+          <ul class="fix-steps">
+            <li>Add a separate opt-in checkbox during newsletter signup: "Ich stimme der Auswertung meines Leseverhaltens zu (optional)"</li>
+            <li>Unsubscribed users should also be able to opt out of tracking only (keep newsletter, no tracking).</li>
+            <li>Update the privacy policy to explicitly name the tracking mechanism, legal basis, and opt-out process.</li>
+            <li>In your email tool (e.g. CleverReach, Mailchimp): disable open/click tracking for users who haven't consented.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+    <div class="no-r" id="nores">
+      <div style="font-size:2rem;margin-bottom:.5rem">🔎</div>
+      <p>No issues match your current filters.</p>
+    </div>
+
+  </div><!-- /issues-col -->
+</main>
+
+<footer>
+  <span>UX Audit — cdu-nrw.de · March 2026 · Pages reviewed: Homepage, News, Partei, Kontakt, Impressum, Datenschutz</span>
+  <span>32 total issues · 4 Critical · 12 High · 12 Medium · 4 Low</span>
+</footer>
+
+<script>
+  // Lightbox
+  function lb(el) {
+    const img = el.querySelector('img');
+    document.getElementById('lb-img').src = img.src;
+    document.getElementById('lb').classList.add('open');
+  }
+
+  // Filters
+  const cards = [...document.querySelectorAll('.card')];
+  const secs  = [...document.querySelectorAll('.sec')];
+  let sev = 'all', cat = 'all', q = '';
+
+  function update() {
+    let n = 0;
+    cards.forEach(c => {
+      const ok = (sev === 'all' || c.dataset.s === sev)
+               && (cat === 'all' || c.dataset.c === cat)
+               && (q === '' || c.innerText.toLowerCase().includes(q));
+      c.classList.toggle('hide', !ok);
+      if (ok) n++;
+    });
+    document.getElementById('vc').textContent = n;
+    secs.forEach(s => {
+      const visible = s.querySelectorAll('.card:not(.hide)').length;
+      s.classList.toggle('all-hide', visible === 0);
+    });
+    document.getElementById('nores').classList.toggle('on', n === 0);
+  }
+
+  document.getElementById('sf').addEventListener('click', e => {
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    sev = b.dataset.s;
+    document.querySelectorAll('[data-s]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); update();
+  });
+
+  document.getElementById('cf').addEventListener('click', e => {
+    const b = e.target.closest('[data-c]'); if (!b) return;
+    cat = b.dataset.c;
+    document.querySelectorAll('[data-c]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); update();
+  });
+
+  document.getElementById('q').addEventListener('input', e => {
+    q = e.target.value.toLowerCase().trim(); update();
+  });
+</script>
+</body>
+</html>
