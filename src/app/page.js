@@ -353,6 +353,11 @@ export default function Home() {
                 {waitlistState.status === "loading" ? "Joining" : "Early Access"}
               </button>
             </form>
+            <div className="hero-proof-chips" aria-label="IKAG can arrange">
+              {["Private tables", "Drivers", "Villas", "Handled in chat"].map((chip) => (
+                <span key={chip}>{chip}</span>
+              ))}
+            </div>
             {waitlistState.message && (
               <p className={`waitlist-status ${waitlistState.status}`}>{waitlistState.message}</p>
             )}
@@ -559,19 +564,19 @@ export default function Home() {
       <section className="outro" id="waitlist">
         <div className="outro-inner">
           <p style={{ color: "var(--accent-olive)", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'DM Mono', monospace" }}>
-            The list is short. The world is wide.
+            Request early access
           </p>
           <h1>
-            Everywhere<br />
-            <em>you land.</em>
+            Get the right name<br />
+            <em>before you land.</em>
           </h1>
           <p className="outro-sub">
-            Limited early access. Apply now and be first in line.
+            Join the private beta for travellers, hosts, and hotels who want every stay handled before the ask becomes urgent.
           </p>
           <form className="waitlist-form" onSubmit={handleWaitlistSubmit} data-source="outro" style={{ maxWidth: 420 }}>
             <input name="email" type="email" placeholder="Enter your email" aria-label="Email address" autoComplete="email" required />
             <button type="submit" className="btn-outro" disabled={waitlistState.status === "loading"}>
-              {waitlistState.status === "loading" ? "Joining" : "I want in"}
+              {waitlistState.status === "loading" ? "Joining" : "Request access"}
             </button>
           </form>
           {waitlistState.message && (
@@ -660,10 +665,11 @@ export default function Home() {
 }
 
 function ConciergeSimulatorSection() {
+  const chips = ["Tonight", "Near Marina", "Not touristy", "Driver included"];
   const options = [
-    { title: "Table held", detail: "Omakase counter, 9:45 PM", icon: Utensils },
-    { title: "Driver ready", detail: "Hotel pickup in 18 min", icon: Car },
-    { title: "Name at door", detail: "Ask for Niko on arrival", icon: KeyRound },
+    { title: "Option one", detail: "Omakase counter, 9:45 PM", meta: "2 seats held", icon: Utensils },
+    { title: "Transfer", detail: "Black car from your hotel", meta: "18 min pickup", icon: Car },
+    { title: "Arrival", detail: "Ask for Niko at the side door", meta: "Name confirmed", icon: KeyRound },
   ];
 
   return (
@@ -692,19 +698,25 @@ function ConciergeSimulatorSection() {
               I need dinner in Ibiza tonight. Somewhere hard to get, not touristy.
             </div>
           </div>
+          <div className="simulator-chip-row" aria-label="Concierge filters">
+            {chips.map((chip) => (
+              <span key={chip}>{chip}</span>
+            ))}
+          </div>
           <div className="message-row ikag">
             <div className="agent-avatar">IK</div>
             <div className="message-stack">
               <div className="message-bubble dark">
-                Found three fits. Best one has two seats if you can arrive by 9:45.
+                Found the strongest fit. I can hold it for six minutes and pair it with a driver.
               </div>
               <div className="resolution-grid">
-                {options.map(({ title, detail, icon: Icon }) => (
+                {options.map(({ title, detail, meta, icon: Icon }) => (
                   <article className="resolution-card" key={title}>
                     <Icon size={17} />
                     <div>
                       <strong>{title}</strong>
                       <span>{detail}</span>
+                      <small>{meta}</small>
                     </div>
                   </article>
                 ))}
@@ -713,7 +725,7 @@ function ConciergeSimulatorSection() {
           </div>
           <div className="simulator-confirm">
             <CheckCircle2 size={16} />
-            <span>Plan ready in 04:12</span>
+            <span>Booking held. Approve to confirm.</span>
           </div>
         </div>
       </div>
@@ -724,27 +736,27 @@ function ConciergeSimulatorSection() {
 function RequestTimelineSection() {
   const steps = [
     {
-      time: "11:07 PM",
-      title: "Ask sent",
-      body: "Dinner, driver, and door contact requested from one message.",
+      time: "00:00",
+      title: "Request received",
+      body: "Dinner, driver, and door contact captured from one message.",
       icon: MessageSquare,
     },
     {
-      time: "11:14 PM",
-      title: "Options filtered",
-      body: "Tourist-heavy places removed. Two trusted rooms checked.",
+      time: "04:12",
+      title: "Local options checked",
+      body: "Tourist-heavy places removed. Trusted rooms and fixers checked.",
       icon: Sparkles,
     },
     {
-      time: "11:31 PM",
-      title: "Plan locked",
-      body: "Table held, driver assigned, arrival name confirmed.",
+      time: "07:38",
+      title: "Availability confirmed",
+      body: "Table held, driver assigned, and arrival contact verified.",
       icon: CalendarCheck,
     },
     {
-      time: "12:02 AM",
-      title: "On arrival",
-      body: "Guest walks in with the right name and no friction.",
+      time: "09:00",
+      title: "You approve",
+      body: "One tap confirms the plan and sends the exact arrival notes.",
       icon: Building2,
     },
   ];

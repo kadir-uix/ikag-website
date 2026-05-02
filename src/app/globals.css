@@ -282,6 +282,26 @@ canvas {
   cursor: wait;
   opacity: 0.72;
 }
+.hero-proof-chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  max-width: 520px;
+}
+.hero-proof-chips span {
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 9999px;
+  padding: 0.42rem 0.7rem;
+  background: rgba(255,255,255,0.055);
+  color: rgba(255,255,255,0.58);
+  font-family: "DM Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 .waitlist-status {
   margin-top: 0.85rem;
   font-family: "DM Mono", monospace;
@@ -580,6 +600,24 @@ canvas {
 .message-row.user {
   justify-content: flex-end;
 }
+.simulator-chip-row {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+.simulator-chip-row span {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9999px;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255,255,255,0.045);
+  color: rgba(255,255,255,0.46);
+  font-family: "DM Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 .message-bubble {
   max-width: 78%;
   border-radius: 20px;
@@ -645,6 +683,18 @@ canvas {
   font-size: 0.84rem;
   line-height: 1.45;
   color: rgba(255,255,255,0.48);
+}
+.resolution-card small {
+  display: inline-block;
+  margin-top: 0.65rem;
+  border-radius: 9999px;
+  padding: 0.28rem 0.46rem;
+  background: rgba(108,117,7,0.16);
+  color: rgba(232,237,224,0.72);
+  font-family: "DM Mono", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .simulator-confirm {
   margin-top: 1rem;
@@ -1184,6 +1234,15 @@ canvas {
     font-size: 0.98rem;
     line-height: 1.55;
   }
+  .hero-proof-chips {
+    max-width: 21rem;
+    gap: 0.35rem;
+  }
+  .hero-proof-chips span {
+    font-size: 0.52rem;
+    padding: 0.36rem 0.56rem;
+    letter-spacing: 0.075em;
+  }
   .waitlist-form { max-width: min(100%, 390px); }
   .hero-img-container {
     width: clamp(185px, 52vw, 250px);
@@ -1272,6 +1331,12 @@ canvas {
     max-width: 92%;
     padding: 0.85rem 0.95rem;
     font-size: 0.88rem;
+  }
+  .simulator-chip-row {
+    justify-content: flex-start;
+  }
+  .simulator-chip-row span {
+    font-size: 0.52rem;
   }
   .agent-avatar {
     width: 32px;

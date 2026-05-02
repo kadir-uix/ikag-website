@@ -21,6 +21,7 @@ const TABS = [
       "Last-minute villas",
       "One conversation, handled",
     ],
+    metric: "Save hours in every city",
     cta: "Join the Waitlist",
   },
   {
@@ -36,6 +37,7 @@ const TABS = [
       "Higher booking rates",
       "Zero effort on your end",
     ],
+    metric: "Better reviews, higher ADR",
     cta: "Partner with Us",
   },
   {
@@ -51,6 +53,7 @@ const TABS = [
       "Revenue share on bookings",
       "Scalable across properties",
     ],
+    metric: "24/7 off-property coverage",
     cta: "Explore Partnership",
   },
 ];
@@ -400,6 +403,23 @@ export default function AudienceSection() {
                   }}
                 >
                   {/* Headline */}
+                  <div
+                    className="audience-metric-pill"
+                    style={{
+                      alignSelf: "flex-start",
+                      border: "1px solid rgba(108,117,7,0.45)",
+                      borderRadius: "9999px",
+                      padding: "0.42rem 0.72rem",
+                      color: "rgba(232,237,224,0.82)",
+                      background: "rgba(108,117,7,0.14)",
+                      fontFamily: "'DM Mono', monospace",
+                      fontSize: "0.62rem",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {tab.metric}
+                  </div>
                   <h3
                     style={{
                       fontFamily: "'Host Grotesk', sans-serif",
@@ -591,6 +611,11 @@ export default function AudienceSection() {
           .audience-card-wrap p {
             font-size: 0.92rem !important;
             line-height: 1.6 !important;
+          }
+          .audience-metric-pill {
+            font-size: 0.55rem !important;
+            line-height: 1.35 !important;
+            max-width: 100%;
           }
           .audience-card-wrap li {
             align-items: flex-start !important;

@@ -15,6 +15,14 @@ import { Badge } from "@/components/ui/badge";
 
 export default function CuratedSection() {
   const sectionRef = useRef(null);
+  const accessTags = [
+    "Private tables",
+    "Villa access",
+    "Drivers",
+    "Chefs",
+    "Nightlife",
+    "Clinics",
+  ];
 
   useGSAP(
     () => {
@@ -185,7 +193,7 @@ export default function CuratedSection() {
                 <div className="relative z-20" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%", padding: "2.25rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.15em", color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>
                     <MapPin size={12} />
-                    <span>Concierge</span>
+                    <span>Access Menu</span>
                   </div>
                   <div>
                     <h3
@@ -201,10 +209,10 @@ export default function CuratedSection() {
                         maxWidth: 240,
                       }}
                     >
-                      {mask("Curated journeys for the modern explorer.")}
+                      {mask("Private access, arranged before arrival.")}
                     </h3>
                     <p style={{ fontFamily: "'Host Grotesk', sans-serif", fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: 220 }}>
-                      Handpicked villas, hotels and hideaways.
+                      Villas, rooms, tables, and local names matched to the way you travel.
                     </p>
                   </div>
                 </div>
@@ -381,9 +389,8 @@ export default function CuratedSection() {
                         color: "rgba(255,255,255,0.8)",
                       }}
                     >
-                      IKAG found me a private chef, a last-minute villa, and a
-                      sunset yacht — all in one conversation. Nothing comes
-                      close.
+                      IKAG did not send me a list. It held the table, sent the
+                      driver, and told me exactly who to ask for at the door.
                     </p>
                     <div
                       className="flex items-center gap-3"
@@ -419,7 +426,7 @@ export default function CuratedSection() {
                           color: "rgba(255,255,255,0.4)",
                         }}
                       >
-                        Sofia R. — Dubai
+                        Sofia R. - Dubai
                       </p>
                     </div>
                   </div>
@@ -514,7 +521,7 @@ export default function CuratedSection() {
                         fontWeight: 500,
                       }}
                     >
-                      Global Destinations
+                      Cities and resort corridors
                     </p>
                   </div>
                   <div
@@ -560,13 +567,13 @@ export default function CuratedSection() {
                 <div className="absolute inset-0 z-10" style={{ position: "absolute", inset: 0, zIndex: 10, background: "linear-gradient(to bottom, rgba(15,13,10,0.7) 0%, rgba(15,13,10,0.1) 35%, rgba(15,13,10,0.75) 100%)" }} />
                 <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" style={{ position: "absolute", inset: 0, zIndex: 10, background: "radial-gradient(ellipse at 50% 100%, rgba(108,117,7,0.3) 0%, transparent 70%)" }} />
                 <div className="relative z-20 h-full text-white" style={{ position: "relative", zIndex: 20, padding: "2.25rem", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%", color: "white" }}>
-                  <div style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)" }}>The Archive</div>
+                  <div style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)" }}>Local Intel</div>
                   <div>
                     <h3 className="font-semibold text-white mb-3 reveal-trigger" style={{ fontFamily: "'Host Grotesk', sans-serif", fontSize: "clamp(1.4rem, 2vw, 1.9rem)", letterSpacing: "-0.02em", color: "white", fontWeight: 600, marginBottom: "0.75rem" }}>
-                      {mask("Untamed Horizons")}
+                      {mask("The names you need")}
                     </h3>
                     <p style={{ fontFamily: "'Host Grotesk', sans-serif", fontSize: "0.875rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, maxWidth: "260px", letterSpacing: 0 }}>
-                      Our private collection of secluded destinations, hidden from standard flight paths.
+                      Door contacts, table notes, room preferences, and trusted operators.
                     </p>
                   </div>
                 </div>
@@ -579,12 +586,21 @@ export default function CuratedSection() {
                 <div style={{ fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.14em", color: "rgba(15,13,10,0.35)", fontFamily: "'DM Mono', monospace" }}>
                   On request
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                  {["Private Chef", "Yacht Charter", "Villa Access", "Personal Driver", "Beauty Clinic"].map((s) => (
-                    <div key={s} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                      <div style={{ width: 2, height: 14, background: "var(--accent, #2d3a24)", borderRadius: 1, flexShrink: 0 }} />
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "rgba(15,13,10,0.7)", letterSpacing: "0.04em" }}>{s}</span>
-                    </div>
+                <div className="access-tag-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "0.65rem" }}>
+                  {accessTags.map((s) => (
+                    <span key={s} style={{
+                      border: "1px solid rgba(15,13,10,0.11)",
+                      borderRadius: "9999px",
+                      padding: "0.55rem 0.7rem",
+                      fontFamily: "'DM Mono', monospace",
+                      fontSize: "0.66rem",
+                      color: "rgba(15,13,10,0.68)",
+                      letterSpacing: "0.04em",
+                      textAlign: "center",
+                      background: "rgba(255,255,255,0.38)",
+                    }}>
+                      {s}
+                    </span>
                   ))}
                 </div>
               </PremiumCard>
@@ -638,6 +654,9 @@ export default function CuratedSection() {
           }
           .curated-grid h3 {
             max-width: 100% !important;
+          }
+          .access-tag-grid {
+            grid-template-columns: 1fr !important;
           }
         }
         @media (max-width: 390px) {
