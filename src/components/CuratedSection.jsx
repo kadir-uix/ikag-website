@@ -50,9 +50,9 @@ export default function CuratedSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden"
+      className="curated-section relative w-full overflow-hidden"
       style={{
-        width: '100vw',
+        width: '100%',
         backgroundColor: 'var(--bg)',
         paddingTop: '8rem',
         paddingBottom: '10rem',
@@ -250,6 +250,8 @@ export default function CuratedSection() {
                       <span>Early Access</span>
                     </div>
                     <button
+                      type="button"
+                      aria-label="Request your invitation"
                       className="w-9 h-9 rounded-full border border-white/25 text-white flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:text-[#2d3a24]"
                       style={{
                         width: "2.25rem",
@@ -261,6 +263,9 @@ export default function CuratedSection() {
                         alignItems: "center",
                         justifyContent: "center",
                       }}
+                      onClick={() =>
+                        document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })
+                      }
                     >
                       <ArrowUpRight size={16} />
                     </button>
@@ -293,7 +298,7 @@ export default function CuratedSection() {
                         color: "rgba(255,255,255,0.55)",
                       }}
                     >
-                      Limited spots for 2025
+                      Limited early access
                     </p>
                   </div>
                 </div>
@@ -591,6 +596,59 @@ export default function CuratedSection() {
       <style>{`
         .word-mask { display: inline-flex; overflow: hidden; vertical-align: top; }
         .word-inner { display: inline-block; transform: translateY(110%); will-change: transform; }
+        .curated-grid [class*="grid"] > div > div {
+          min-height: 260px;
+        }
+        .curated-grid button:focus-visible {
+          outline: 2px solid rgba(255,255,255,0.75);
+          outline-offset: 3px;
+        }
+        @media (max-width: 768px) {
+          .curated-section {
+            padding-top: 5rem !important;
+            padding-bottom: 5.5rem !important;
+          }
+          .curated-section > div:nth-child(3) {
+            padding-left: 1.1rem !important;
+            padding-right: 1.1rem !important;
+          }
+          .curated-section h2 {
+            font-size: clamp(2.35rem, 10vw, 3.1rem) !important;
+            max-width: 10ch !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+          .curated-section h2 + p,
+          .curated-section p {
+            overflow-wrap: break-word;
+          }
+          .curated-grid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+          .curated-grid [class*="grid"] > div > div {
+            min-height: 240px;
+          }
+          .curated-grid [class*="grid"] > div {
+            gap: 12px !important;
+          }
+          .curated-grid [class*="grid"] > div > div > div,
+          .curated-grid [class*="grid"] > div > div[style] {
+            border-radius: 14px !important;
+          }
+          .curated-grid h3 {
+            max-width: 100% !important;
+          }
+        }
+        @media (max-width: 390px) {
+          .curated-grid [class*="grid"] > div > div {
+            min-height: 220px;
+          }
+          .curated-grid [style*="2.25rem"],
+          .curated-grid [style*="2rem"] {
+            padding: 1.45rem !important;
+          }
+        }
       `}</style>
     </section>
   );

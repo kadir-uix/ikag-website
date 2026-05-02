@@ -136,8 +136,9 @@ export default function AudienceSection() {
   return (
     <section
       ref={sectionRef}
+      className="audience-section"
       style={{
-        width: "100vw",
+        width: "100%",
         backgroundColor: "var(--bg, #fefbf4)",
         paddingTop: "8rem",
         paddingBottom: "10rem",
@@ -228,6 +229,8 @@ export default function AudienceSection() {
         {/* ── Tab switcher ── */}
         <div
           className="audience-tabs"
+          role="tablist"
+          aria-label="Audience type"
           style={{
             display: "flex",
             flexDirection: "row",
@@ -242,6 +245,10 @@ export default function AudienceSection() {
           {TABS.map((t, i) => (
             <button
               key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === i}
+              aria-controls="audience-panel"
               onClick={() => handleTabSwitch(i)}
               style={{
                 fontFamily: "'Host Grotesk', sans-serif",
@@ -267,6 +274,7 @@ export default function AudienceSection() {
         <div className="audience-card-wrap" style={{ width: "100%" }}>
           <div ref={cardRef} style={{ width: "100%" }}>
             <PremiumCard
+              id="audience-panel"
               style={{
                 background: "#0f0d0a",
                 minHeight: "520px",
@@ -480,6 +488,7 @@ export default function AudienceSection() {
                   }}
                 >
                   <button
+                    type="button"
                     style={{
                       fontFamily: "'Host Grotesk', sans-serif",
                       fontSize: "0.85rem",
@@ -494,6 +503,9 @@ export default function AudienceSection() {
                       transition:
                         "border-color 0.25s ease, color 0.25s ease, background 0.25s ease",
                     }}
+                    onClick={() =>
+                      document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })
+                    }
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor =
                         "rgba(255,255,255,0.55)";
@@ -518,14 +530,88 @@ export default function AudienceSection() {
       </div>
 
       <style>{`
+        .audience-tabs button:focus-visible {
+          outline: 2px solid rgba(45,58,36,0.55);
+          outline-offset: 3px;
+        }
         @media (max-width: 768px) {
+          .audience-section {
+            padding-top: 5rem !important;
+            padding-bottom: 5.5rem !important;
+          }
+          .audience-section > div:nth-child(2) {
+            padding-left: 1.1rem !important;
+            padding-right: 1.1rem !important;
+          }
+          .audience-header {
+            margin-bottom: 2rem !important;
+          }
+          .audience-header h2 {
+            font-size: clamp(2.35rem, 10vw, 3.1rem) !important;
+            max-width: 10ch !important;
+          }
+          .audience-header p {
+            font-size: 0.98rem !important;
+            max-width: 22rem !important;
+          }
+          .audience-tabs {
+            width: 100%;
+            overflow-x: auto;
+            justify-content: flex-start;
+            border-radius: 18px !important;
+            margin-bottom: 1.5rem !important;
+            padding: 0.28rem !important;
+            scrollbar-width: none;
+          }
+          .audience-tabs::-webkit-scrollbar {
+            display: none;
+          }
+          .audience-tabs button {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 0.52rem 1rem !important;
+            font-size: 0.78rem !important;
+          }
           .audience-photo-side {
             flex: 0 0 100% !important;
-            min-height: 260px !important;
-            max-height: 280px !important;
+            min-height: 230px !important;
+            max-height: 255px !important;
           }
           .audience-card-wrap > div > div {
             flex-direction: column !important;
+            min-height: auto !important;
+            border-radius: 14px !important;
+          }
+          .audience-card-wrap > div > div > div:last-child {
+            padding: 1.65rem 1.25rem !important;
+          }
+          .audience-card-wrap h3 {
+            font-size: clamp(1.55rem, 7vw, 2rem) !important;
+          }
+          .audience-card-wrap p {
+            font-size: 0.92rem !important;
+            line-height: 1.6 !important;
+          }
+          .audience-card-wrap li {
+            align-items: flex-start !important;
+          }
+          .audience-card-wrap li span {
+            font-size: 0.72rem !important;
+            line-height: 1.45 !important;
+          }
+          .audience-card-wrap button {
+            width: 100%;
+            padding: 0.8rem 1rem !important;
+            text-align: center;
+          }
+        }
+        @media (max-width: 390px) {
+          .audience-tabs button {
+            padding-left: 0.82rem !important;
+            padding-right: 0.82rem !important;
+          }
+          .audience-photo-side {
+            min-height: 210px !important;
           }
         }
       `}</style>
@@ -534,9 +620,10 @@ export default function AudienceSection() {
 }
 
 /* ── PremiumCard ── */
-function PremiumCard({ children, className = "", style = {} }) {
+function PremiumCard({ children, className = "", style = {}, id }) {
   return (
     <div
+      id={id}
       className={className}
       style={{
         position: "relative",
