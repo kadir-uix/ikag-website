@@ -90,10 +90,10 @@ export default function Home() {
   // City ticker
   useEffect(() => {
     const cities = [
-      "Dubai · London · Bali · New York",
-      "Mykonos · Tokyo · Paris · Miami",
-      "Maldives · Rome · Ibiza · Singapore",
-      "Santorini · Tulum · Marrakech · Seoul",
+      "DIFC · Marina · Downtown · Jumeirah",
+      "Palm · Business Bay · Alserkal · Creek",
+      "JBR · City Walk · Kite Beach · Deira",
+      "Bluewaters · Nad Al Sheba · Hatta · Creek Harbour",
     ];
     let idx = 0;
     const el = document.querySelector(".launch-text");
@@ -341,7 +341,7 @@ export default function Home() {
         <div className="hero-overlay" />
         <div className="hero-content">
           <div className="header" ref={headerRef}>
-            <p className="launch-text">Dubai · London · Bali · New York</p>
+            <p className="launch-text">DIFC · Marina · Downtown · Jumeirah</p>
             <h1>Know a guy,<br /><em style={{ fontStyle: "italic" }}>everywhere.</em></h1>
             <p className="subtitle">
               One conversation. Private chefs, last-minute villas, hidden
@@ -362,7 +362,7 @@ export default function Home() {
               <p className={`waitlist-status ${waitlistState.status}`}>{waitlistState.message}</p>
             )}
             <p style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.28)", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "1rem", fontFamily: "'DM Mono', monospace" }}>
-              2,400+ members · Dubai · London · New York
+              2,400+ members · Dubai early access
             </p>
           </div>
         </div>
@@ -384,139 +384,153 @@ export default function Home() {
       <ConciergeSimulatorSection />
 
       {/* ════════════════════════════════════════════ PROFILE / ONBOARDING */}
-      <section className="feature-section dark relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <img
-            src="https://images.unsplash.com/photo-1542296332-2e4473faf563?auto=format&fit=crop&q=80&w=2000"
-            alt="Luxury Lounge"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0f0d0a] via-transparent to-[#0f0d0a]" />
-        </div>
-
-        <div className="feature-inner relative z-10">
-          <div className="feature-copy on-dark">
+      <section className="ledger-section">
+        <div className="ledger-inner">
+          <div className="ledger-copy">
             <BrandBadge>Your Profile</BrandBadge>
             <h2>Identity first.<br />Every time.</h2>
             <p className="feature-body">
-              IKAG learns your preferences from day one. Tell it your tastes
-              once — from cuisines to cabin class — and watch every
-              recommendation get sharper.
+              IKAG starts with your taste, not a blank search box. Early access
+              members shape the preference layer before the full profile system
+              goes live.
             </p>
-            <Button
-              variant="outline"
-              className="btn-outline-custom"
-              onClick={() => document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Create Profile <ArrowRight size={13} className="ml-1.5" />
-            </Button>
+            <div className="ledger-note">
+              <span>Coming through early access</span>
+              <strong>Tell IKAG what you care about once. Every request after that gets sharper.</strong>
+            </div>
           </div>
 
-          <div className="feature-phones">
-            <Phone src="/Screens/Onboarding_02.png" alt="Onboarding" w={260} h={560} style={{ transform: "rotate(-3deg) translateY(12px)" }} />
-            <Phone src="/Screens/Profile.png"       alt="Profile"    w={280} h={600} />
-            <Phone src="/Screens/Favourites.png"    alt="Favourites" w={260} h={560} style={{ transform: "rotate(3deg) translateY(12px)" }} />
+          <div className="ledger-board">
+            <div className="ledger-phone">
+              <Phone src="/Screens/Onboarding_03.png" alt="Interest selection" w={260} h={560} />
+            </div>
+            {[
+              ["Food-spots", "Restaurants, cafes, hidden tables", "Selected"],
+              ["Adventures", "Desert drives, boats, local escapes", "Selected"],
+              ["Shopping", "Concept stores and private retail", "Selected"],
+              ["Sports", "Courts, clubs, tickets, trainers", "Selected"],
+              ["Luxury", "Premium stays and discreet access", "Optional"],
+            ].map(([label, value, meta]) => (
+              <article className="ledger-row" key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+                <small>{meta}</small>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════ CONCIERGE */}
-      <section className="feature-section dark relative overflow-hidden" id="concierge">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <img
-            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000"
-            alt="Restaurant Background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0f0d0a] via-transparent to-[#0f0d0a]" />
-        </div>
-
-        <div className="feature-inner reverse relative z-10">
-          <div className="feature-copy on-dark">
+      <section className="command-section" id="concierge">
+        <div className="command-head">
+          <div>
             <BrandBadge>AI Concierge</BrandBadge>
             <h2>Your wish,<br />instantly fulfilled.</h2>
-            <p className="feature-body">
-              Talk to IKAG like you'd talk to a trusted local. Book a private
-              beauty clinic, reserve a rooftop table, or arrange a driver — all
-              from a single conversation.
-            </p>
-            <Button
-              variant="outline"
-              className="btn-outline-custom"
-              onClick={() => document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Try the Concierge <ArrowRight size={13} className="ml-1.5" />
-            </Button>
           </div>
+          <p>
+            Talk to IKAG like a trusted local. It turns loose intent into a
+            confirmed plan with names, timings, and next steps.
+          </p>
+        </div>
 
-          <div className="feature-phones">
-            <Phone src="/Sections/wish-filled.png"    alt="Chat"    w={300} h={640} style={{ transform: "rotate(-6deg) translateY(30px)", zIndex: 1 }} />
-            <Phone src="/Sections/wish-filled-02.png" alt="Chat 02" w={330} h={700} style={{ zIndex: 2 }} />
+        <div className="command-board">
+          <article className="command-card request-card">
+            <span>Guest request</span>
+            <strong>Dinner tonight in Dubai. Hard to get, not touristy. Driver if possible.</strong>
+            <small>Received 8:41 PM</small>
+          </article>
+          <div className="command-path">
+            {["Parse intent", "Check trusted rooms", "Hold option", "Confirm arrival"].map((step, i) => (
+              <div className="command-step" key={step}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <strong>{step}</strong>
+              </div>
+            ))}
+          </div>
+          <article className="command-card result-card">
+            <CheckCircle2 size={18} />
+            <span>Ready to approve</span>
+            <strong>Omakase counter held at 9:45. Driver can arrive in 18 minutes. Ask for Niko.</strong>
+          </article>
+          <div className="command-phone">
+            <Phone src="/Sections/wish-filled-02.png" alt="Concierge chat" w={210} h={450} />
           </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════ DINING & WELLNESS */}
-      <section className="feature-section light relative overflow-hidden" id="explore">
-        <div className="feature-inner relative z-10">
-          <div className="feature-copy on-warm">
+      <section className="map-section" id="explore">
+        <div className="map-copy">
+          <div>
             <BrandBadge>Discover</BrandBadge>
             <h2>Dining & wellness,<br />hand-picked.</h2>
-            <p className="feature-body">
-              From Michelin-starred restaurants to top-tier beauty clinics,
-              IKAG surfaces only the best. Every recommendation is curated for
-              the discerning traveler.
-            </p>
-            <Button
-              variant="outline"
-              className="btn-outline-custom"
-              onClick={() => document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Explore Now <ArrowRight size={13} className="ml-1.5" />
-            </Button>
           </div>
-
-          <div className="feature-phones">
-            <Phone src="/Screens/Restaurant Inner View.png" alt="Restaurant View" w={240} h={510} style={{ transform: "rotate(3deg) translateY(15px)" }} />
-            <Phone src="/Screens/Restaurant.png"           alt="Restaurant"      w={280} h={600} />
-            <Phone src="/Screens/Beauty_Clinic.png"        alt="Clinic"          w={240} h={510} style={{ transform: "rotate(-3deg) translateY(15px)" }} />
+          <p>
+            Recommendations are pinned to real context: district, mood, access,
+            timing, and what name gets you through the door.
+          </p>
+        </div>
+        <div className="city-map">
+          <div className="map-grid" />
+          {[
+            ["DIFC", "Rooftop table", "Held tonight", "18%", "34%"],
+            ["Marina", "Private driver", "12 min away", "64%", "24%"],
+            ["Jumeirah", "Wellness clinic", "Tomorrow 11:30", "48%", "64%"],
+            ["Downtown", "Chef tasting", "Members room", "26%", "72%"],
+          ].map(([area, title, detail, left, top]) => (
+            <article className="map-pin-card" style={{ left, top }} key={title}>
+              <MapPin size={13} />
+              <span>{area}</span>
+              <strong>{title}</strong>
+              <small>{detail}</small>
+            </article>
+          ))}
+          <div className="map-phone">
+            <Phone src="/Screens/Onboarding_05.png" alt="Nearby location tailoring" w={210} h={450} />
           </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════ COMMUNITY */}
-      <section className="feature-section dark relative overflow-hidden" id="community">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <img
-            src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000"
-            alt="Dubai Skyline"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0f0d0a] via-transparent to-[#0f0d0a]" />
-        </div>
-
-        <div className="feature-inner relative z-10">
-          <div className="feature-copy on-dark">
+      <section className="story-section" id="community">
+        <div className="story-head">
+          <div>
             <BrandBadge>Communities</BrandBadge>
             <h2>Travel together,<br />stay connected.</h2>
-            <p className="feature-body">
-              Join a curated network of like-minded travelers. Share
-              discoveries, plan trips together, and get insider tips from
-              people who've already been — in the cities you're heading to.
-            </p>
-            <Button
-              variant="outline"
-              className="btn-outline-custom"
-              onClick={() => document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Join the Community <ArrowRight size={13} className="ml-1.5" />
-            </Button>
           </div>
+          <p>
+            Member knowledge becomes usable city context: notes, trusted names,
+            last-minute fixes, and places worth skipping.
+          </p>
+        </div>
 
-          <div className="feature-phones">
-            <Phone src="/Screens/Community01.png" alt="Community 01" w={260} h={560} style={{ transform: "rotate(-4deg) translateY(20px)", zIndex: 1 }} />
-            <Phone src="/Screens/Community02.png" alt="Community 02" w={280} h={600} style={{ zIndex: 2 }} />
-            <Phone src="/Screens/Community03.png" alt="Community 03" w={260} h={560} style={{ transform: "rotate(4deg) translateY(20px)", zIndex: 1 }} />
+        <div className="story-grid">
+          <div className="story-content">
+            <article className="story-feature">
+              <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1400" alt="Dubai skyline" />
+              <div>
+                <span>Member note · Dubai</span>
+                <strong>“Skip the obvious list. Ask for the back room after 10:30.”</strong>
+                <p>IKAG turns scattered member knowledge into useful city context: who answers, what to avoid, and when a place is worth the effort.</p>
+              </div>
+            </article>
+            <div className="story-notes">
+              {[
+                ["Marina", "Driver from Marina to DIFC", "Saved by three members this month."],
+                ["Alserkal", "Gallery opening guest list", "Best shot after 7 PM with a local name."],
+                ["Palm", "Beach club table that answers fast", "Use when weekend plans move."],
+              ].map(([city, note, detail]) => (
+                <article className="story-note" key={city}>
+                  <span>{city}</span>
+                  <strong>{note}</strong>
+                  <p>{detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="story-phone">
+            <Phone src="/Screens/Community02.png" alt="Community feed" w={280} h={600} />
           </div>
         </div>
       </section>
@@ -524,38 +538,37 @@ export default function Home() {
       <RequestTimelineSection />
 
       {/* ════════════════════════════════════════════ STAYS */}
-      <section className="feature-section dark relative overflow-hidden stays-feature" id="stays">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <img
-            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000"
-            alt="Hotel Background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0f0d0a] via-transparent to-[#0f0d0a]" />
-        </div>
-
-        <div className="feature-inner reverse relative z-10">
-          <div className="feature-copy on-dark">
+      <section className="dossier-section" id="stays">
+        <div className="dossier-head">
+          <div>
             <BrandBadge>My Stays</BrandBadge>
             <h2>Your stay,<br />perfectly managed.</h2>
-            <p className="feature-body">
-              Real-time itinerary, check-in reminders, and local tips — all in
-              one place. IKAG keeps your trip running smoothly so you can focus
-              on the experience.
-            </p>
-            <Button
-              variant="outline"
-              className="btn-outline-custom"
-              onClick={() => document.querySelector("#waitlist")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Manage Stays <ArrowRight size={13} className="ml-1.5" />
-            </Button>
           </div>
+          <p>
+            Every stay becomes a live board: what is booked, what is waiting,
+            who knows your name, and what happens next.
+          </p>
+        </div>
 
-          <div className="feature-phones">
-            <Phone src="/Screens/My_Stay_01.png" alt="Stay 01" w={280} h={600} style={{ transform: "rotate(4deg) translateY(20px)", zIndex: 1 }} />
-            <Phone src="/Screens/My_Stay_03.png" alt="Stay 02" w={300} h={640} style={{ zIndex: 2 }} />
-            <Phone src="/Screens/My_Stay_05.png" alt="Stay 03" w={280} h={600} style={{ transform: "rotate(-4deg) translateY(20px)", zIndex: 1 }} />
+        <div className="stay-board">
+          {[
+            ["Before arrival", ["Airport pickup assigned", "Villa host briefed", "Welcome groceries requested"]],
+            ["At check-in", ["Suite ready at 3:00", "Keys under guest name", "Late bag drop approved"]],
+            ["Tonight", ["Dinner name at door", "Driver waits nearby", "Backup table held"]],
+            ["Tomorrow", ["Spa slot requested", "Late checkout pending", "Beach club shortlist"]],
+          ].map(([column, items]) => (
+            <div className="stay-column" key={column}>
+              <span>{column}</span>
+              {items.map((item) => (
+                <article className="stay-task" key={item}>
+                  <CheckCircle2 size={14} />
+                  <strong>{item}</strong>
+                </article>
+              ))}
+            </div>
+          ))}
+          <div className="stay-phone">
+            <Phone src="/Screens/My_Stay_06.png" alt="Stay request tracking" w={240} h={510} />
           </div>
         </div>
       </section>
@@ -583,7 +596,7 @@ export default function Home() {
             <p className={`waitlist-status ${waitlistState.status}`}>{waitlistState.message}</p>
           )}
           <div style={{ display: "flex", gap: "2rem", opacity: 0.3, marginTop: "2.5rem", flexWrap: "wrap", justifyContent: "center" }}>
-            {["Dubai", "London", "Bali", "New York"].map((c) => (
+            {["DIFC", "Marina", "Downtown", "Jumeirah"].map((c) => (
               <span key={c} style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.15em", color: "#fff", display: "flex", alignItems: "center", gap: "0.35rem" }}>
                 <MapPin size={9} />
                 {c}
@@ -612,7 +625,7 @@ export default function Home() {
               <em>Everywhere you land.</em>
             </p>
             <div className="footer-cities">
-              {["Dubai", "London", "Bali", "New York", "Tokyo"].map((city) => (
+              {["Dubai", "DIFC", "Marina", "Downtown", "Jumeirah"].map((city) => (
                 <span key={city} className="footer-city">
                   <MapPin size={9} />
                   {city}
@@ -695,7 +708,7 @@ function ConciergeSimulatorSection() {
           </div>
           <div className="message-row user">
             <div className="message-bubble">
-              I need dinner in Ibiza tonight. Somewhere hard to get, not touristy.
+              I need dinner in Dubai tonight. Somewhere hard to get, not touristy.
             </div>
           </div>
           <div className="simulator-chip-row" aria-label="Concierge filters">
