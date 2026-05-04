@@ -11,7 +11,8 @@ import {
   Compass,
   ArrowUpRight,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import PremiumCard from "@/components/PremiumCard";
+import SectionBadge from "@/components/SectionBadge";
 
 export default function CuratedSection() {
   const sectionRef = useRef(null);
@@ -107,13 +108,9 @@ export default function CuratedSection() {
           className="flex flex-col items-center gap-4"
           style={{ textAlign: "center", width: "100%", marginBottom: "3.5rem" }}
         >
-          <Badge
-            variant="outline"
-            className="rounded-full text-[0.62rem] tracking-[0.16em] uppercase px-3 py-1 border-[#2d3a24]/35 text-[#2d3a24] w-fit"
-            style={{ margin: "0 auto" }}
-          >
+          <SectionBadge>
             What We Offer
-          </Badge>
+          </SectionBadge>
           <h2
             className="text-[#0f0d0a] max-w-2xl leading-[1.06] px-4"
             style={{
@@ -715,38 +712,4 @@ function Bracket({ pos }) {
     },
   };
   return <div style={{ ...base, ...map[pos] }} />;
-}
-
-function PremiumCard({ children, className = "", style = {} }) {
-  return (
-    <div
-      className={className}
-      style={{
-        position: "relative",
-        zIndex: 10,
-        borderRadius: 16,
-        overflow: "hidden",
-        ...style,
-      }}
-    >
-      {/* Inner shimmer border */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 20,
-          border: "1px solid transparent",
-          borderRadius: "inherit",
-          background:
-            "linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 100%) border-box",
-          WebkitMask:
-            "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "destination-out",
-          maskComposite: "exclude",
-        }}
-      />
-      {children}
-    </div>
-  );
 }

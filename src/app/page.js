@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Lenis from "lenis";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowRight,
@@ -23,6 +22,78 @@ import {
 } from "lucide-react";
 import CuratedSection from "@/components/CuratedSection";
 import AudienceSection from "@/components/AudienceSection";
+import PhoneMockup from "@/components/PhoneMockup";
+import SectionBadge from "@/components/SectionBadge";
+
+const LEDGER_ROWS = [
+  ["Food-spots", "Restaurants, cafes, hidden tables", "Selected"],
+  ["Adventures", "Desert drives, boats, local escapes", "Selected"],
+  ["Shopping", "Concept stores and private retail", "Selected"],
+  ["Sports", "Courts, clubs, tickets, trainers", "Selected"],
+  ["Luxury", "Premium stays and discreet access", "Optional"],
+];
+
+const COMMAND_STEPS = [
+  "Parse intent",
+  "Check trusted rooms",
+  "Hold option",
+  "Confirm arrival",
+];
+
+const MAP_PINS = [
+  ["DIFC", "Rooftop table", "Held tonight", "18%", "34%"],
+  ["Marina", "Private driver", "12 min away", "64%", "24%"],
+  ["Jumeirah", "Wellness clinic", "Tomorrow 11:30", "48%", "64%"],
+  ["Downtown", "Chef tasting", "Members room", "26%", "72%"],
+];
+
+const STORY_NOTES = [
+  ["Marina", "Driver from Marina to DIFC", "Saved by three members this month."],
+  ["Alserkal", "Gallery opening guest list", "Best shot after 7 PM with a local name."],
+  ["Palm", "Beach club table that answers fast", "Use when weekend plans move."],
+];
+
+const STAY_COLUMNS = [
+  ["Before arrival", ["Airport pickup assigned", "Villa host briefed", "Welcome groceries requested"]],
+  ["At check-in", ["Suite ready at 3:00", "Keys under guest name", "Late bag drop approved"]],
+  ["Tonight", ["Dinner name at door", "Driver waits nearby", "Backup table held"]],
+  ["Tomorrow", ["Spa slot requested", "Late checkout pending", "Beach club shortlist"]],
+];
+
+function WaitlistForm({
+  source,
+  label,
+  loading,
+  onSubmit,
+  buttonClassName = "",
+  style,
+}) {
+  return (
+    <form
+      className="waitlist-form"
+      onSubmit={onSubmit}
+      data-source={source}
+      style={style}
+    >
+      <input
+        name="email"
+        type="email"
+        placeholder="Enter your email"
+        aria-label="Email address"
+        autoComplete="email"
+        required
+      />
+      <button type="submit" className={buttonClassName} disabled={loading}>
+        {loading ? "Joining" : label}
+      </button>
+    </form>
+  );
+}
+
+function WaitlistStatus({ state }) {
+  if (!state.message) return null;
+  return <p className={`waitlist-status ${state.status}`}>{state.message}</p>;
+}
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -232,8 +303,8 @@ export default function Home() {
           const isMobile = mobileQuery.matches;
           const headerDepth = isMobile ? -260 : -500;
           const phoneStartY = isMobile ? 78 : 120;
-          const phoneTiltX = isMobile ? 52 : 75;
-          const phoneTiltY = isMobile ? -22 : -35;
+          const phoneTiltX = isMobile ? 0 : 75;
+          const phoneTiltY = isMobile ? 0 : -35;
           framesRef.current.frame = Math.round(ease(p) * (FC - 1));
           draw();
 
@@ -297,20 +368,10 @@ export default function Home() {
   }, { scope: containerRef });
 
   /* ── Helpers ── */
-  const Phone = ({ src, alt, w = 260, h = 530, style = {} }) => (
-    <div className="phone" style={{ width: w, height: h, ...style }}>
-      <img src={src} alt={alt} />
-    </div>
-  );
-
   const BrandBadge = ({ children }) => (
-    <Badge
-      variant="outline"
-      className="rounded-full text-[0.62rem] tracking-[0.14em] uppercase px-5 py-1.5
-                 border-[#2d3a24]/30 text-[#2d3a24] bg-[#2d3a24]/[0.08] w-fit font-bold"
-    >
+    <SectionBadge className="border-[#2d3a24]/30 bg-[#2d3a24]/[0.08] font-bold">
       {children}
-    </Badge>
+    </SectionBadge>
   );
 
   return (
@@ -347,20 +408,18 @@ export default function Home() {
               One conversation. Private chefs, last-minute villas, hidden
               tables — wherever you land, IKAG already knows someone.
             </p>
-            <form className="waitlist-form" onSubmit={handleWaitlistSubmit} data-source="hero">
-              <input name="email" type="email" placeholder="Enter your email" aria-label="Email address" autoComplete="email" required />
-              <button type="submit" disabled={waitlistState.status === "loading"}>
-                {waitlistState.status === "loading" ? "Joining" : "Early Access"}
-              </button>
-            </form>
+            <WaitlistForm
+              source="hero"
+              label="Early Access"
+              loading={waitlistState.status === "loading"}
+              onSubmit={handleWaitlistSubmit}
+            />
             <div className="hero-proof-chips" aria-label="IKAG can arrange">
               {["Private tables", "Drivers", "Villas", "Handled in chat"].map((chip) => (
                 <span key={chip}>{chip}</span>
               ))}
             </div>
-            {waitlistState.message && (
-              <p className={`waitlist-status ${waitlistState.status}`}>{waitlistState.message}</p>
-            )}
+            <WaitlistStatus state={waitlistState} />
             <p style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.28)", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "1rem", fontFamily: "'DM Mono', monospace" }}>
               2,400+ members · Dubai early access
             </p>
@@ -402,15 +461,9 @@ export default function Home() {
 
           <div className="ledger-board">
             <div className="ledger-phone">
-              <Phone src="/Screens/Onboarding_03.png" alt="Interest selection" w={260} h={560} />
+              <PhoneMockup src="/Screens/Onboarding_03.png" alt="Interest selection" width={260} height={560} />
             </div>
-            {[
-              ["Food-spots", "Restaurants, cafes, hidden tables", "Selected"],
-              ["Adventures", "Desert drives, boats, local escapes", "Selected"],
-              ["Shopping", "Concept stores and private retail", "Selected"],
-              ["Sports", "Courts, clubs, tickets, trainers", "Selected"],
-              ["Luxury", "Premium stays and discreet access", "Optional"],
-            ].map(([label, value, meta]) => (
+            {LEDGER_ROWS.map(([label, value, meta]) => (
               <article className="ledger-row" key={label}>
                 <span>{label}</span>
                 <strong>{value}</strong>
@@ -441,7 +494,7 @@ export default function Home() {
             <small>Received 8:41 PM</small>
           </article>
           <div className="command-path">
-            {["Parse intent", "Check trusted rooms", "Hold option", "Confirm arrival"].map((step, i) => (
+            {COMMAND_STEPS.map((step, i) => (
               <div className="command-step" key={step}>
                 <span>{String(i + 1).padStart(2, "0")}</span>
                 <strong>{step}</strong>
@@ -454,7 +507,7 @@ export default function Home() {
             <strong>Omakase counter held at 9:45. Driver can arrive in 18 minutes. Ask for Niko.</strong>
           </article>
           <div className="command-phone">
-            <Phone src="/Sections/wish-filled-02.png" alt="Concierge chat" w={210} h={450} />
+            <PhoneMockup src="/Sections/wish-filled-02.png" alt="Concierge chat" width={210} height={450} />
           </div>
         </div>
       </section>
@@ -473,12 +526,7 @@ export default function Home() {
         </div>
         <div className="city-map">
           <div className="map-grid" />
-          {[
-            ["DIFC", "Rooftop table", "Held tonight", "18%", "34%"],
-            ["Marina", "Private driver", "12 min away", "64%", "24%"],
-            ["Jumeirah", "Wellness clinic", "Tomorrow 11:30", "48%", "64%"],
-            ["Downtown", "Chef tasting", "Members room", "26%", "72%"],
-          ].map(([area, title, detail, left, top]) => (
+          {MAP_PINS.map(([area, title, detail, left, top]) => (
             <article className="map-pin-card" style={{ left, top }} key={title}>
               <MapPin size={13} />
               <span>{area}</span>
@@ -487,7 +535,7 @@ export default function Home() {
             </article>
           ))}
           <div className="map-phone">
-            <Phone src="/Screens/Onboarding_05.png" alt="Nearby location tailoring" w={210} h={450} />
+            <PhoneMockup src="/Screens/Onboarding_05.png" alt="Nearby location tailoring" width={210} height={450} />
           </div>
         </div>
       </section>
@@ -516,11 +564,7 @@ export default function Home() {
               </div>
             </article>
             <div className="story-notes">
-              {[
-                ["Marina", "Driver from Marina to DIFC", "Saved by three members this month."],
-                ["Alserkal", "Gallery opening guest list", "Best shot after 7 PM with a local name."],
-                ["Palm", "Beach club table that answers fast", "Use when weekend plans move."],
-              ].map(([city, note, detail]) => (
+              {STORY_NOTES.map(([city, note, detail]) => (
                 <article className="story-note" key={city}>
                   <span>{city}</span>
                   <strong>{note}</strong>
@@ -530,7 +574,7 @@ export default function Home() {
             </div>
           </div>
           <div className="story-phone">
-            <Phone src="/Screens/Community02.png" alt="Community feed" w={280} h={600} />
+            <PhoneMockup src="/Screens/Community02.png" alt="Community feed" width={280} height={600} />
           </div>
         </div>
       </section>
@@ -551,12 +595,7 @@ export default function Home() {
         </div>
 
         <div className="stay-board">
-          {[
-            ["Before arrival", ["Airport pickup assigned", "Villa host briefed", "Welcome groceries requested"]],
-            ["At check-in", ["Suite ready at 3:00", "Keys under guest name", "Late bag drop approved"]],
-            ["Tonight", ["Dinner name at door", "Driver waits nearby", "Backup table held"]],
-            ["Tomorrow", ["Spa slot requested", "Late checkout pending", "Beach club shortlist"]],
-          ].map(([column, items]) => (
+          {STAY_COLUMNS.map(([column, items]) => (
             <div className="stay-column" key={column}>
               <span>{column}</span>
               {items.map((item) => (
@@ -568,7 +607,7 @@ export default function Home() {
             </div>
           ))}
           <div className="stay-phone">
-            <Phone src="/Screens/My_Stay_06.png" alt="Stay request tracking" w={240} h={510} />
+            <PhoneMockup src="/Screens/My_Stay_06.png" alt="Stay request tracking" width={240} height={510} />
           </div>
         </div>
       </section>
@@ -586,15 +625,15 @@ export default function Home() {
           <p className="outro-sub">
             Join the private beta for travellers, hosts, and hotels who want every stay handled before the ask becomes urgent.
           </p>
-          <form className="waitlist-form" onSubmit={handleWaitlistSubmit} data-source="outro" style={{ maxWidth: 420 }}>
-            <input name="email" type="email" placeholder="Enter your email" aria-label="Email address" autoComplete="email" required />
-            <button type="submit" className="btn-outro" disabled={waitlistState.status === "loading"}>
-              {waitlistState.status === "loading" ? "Joining" : "Request access"}
-            </button>
-          </form>
-          {waitlistState.message && (
-            <p className={`waitlist-status ${waitlistState.status}`}>{waitlistState.message}</p>
-          )}
+          <WaitlistForm
+            source="outro"
+            label="Request access"
+            loading={waitlistState.status === "loading"}
+            onSubmit={handleWaitlistSubmit}
+            buttonClassName="btn-outro"
+            style={{ maxWidth: 420 }}
+          />
+          <WaitlistStatus state={waitlistState} />
           <div style={{ display: "flex", gap: "2rem", opacity: 0.3, marginTop: "2.5rem", flexWrap: "wrap", justifyContent: "center" }}>
             {["DIFC", "Marina", "Downtown", "Jumeirah"].map((c) => (
               <span key={c} style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.65rem", letterSpacing: "0.15em", color: "#fff", display: "flex", alignItems: "center", gap: "0.35rem" }}>

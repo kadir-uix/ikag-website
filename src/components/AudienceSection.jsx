@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Badge } from "@/components/ui/badge";
+import PremiumCard from "@/components/PremiumCard";
+import SectionBadge from "@/components/SectionBadge";
 import { CheckCircle2 } from "lucide-react";
 
 const TABS = [
@@ -187,13 +188,9 @@ export default function AudienceSection() {
             width: "100%",
           }}
         >
-          <Badge
-            variant="outline"
-            className="rounded-full text-[0.62rem] tracking-[0.16em] uppercase px-3 py-1 border-[#2d3a24]/35 text-[#2d3a24] w-fit"
-            style={{ margin: "0 auto" }}
-          >
+          <SectionBadge>
             B2C · B2B
-          </Badge>
+          </SectionBadge>
 
           <h2
             style={{
@@ -254,10 +251,14 @@ export default function AudienceSection() {
               aria-controls="audience-panel"
               onClick={() => handleTabSwitch(i)}
               style={{
-                fontFamily: "'Host Grotesk', sans-serif",
+                fontFamily: "'Inter Display', 'Inter', sans-serif",
                 fontSize: "0.875rem",
                 fontWeight: 500,
                 letterSpacing: "-0.01em",
+                lineHeight: 1,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
                 padding: "0.55rem 1.4rem",
                 borderRadius: "9999px",
                 border: "none",
@@ -575,12 +576,15 @@ export default function AudienceSection() {
             max-width: 22rem !important;
           }
           .audience-tabs {
-            width: 100%;
+            width: max-content;
+            max-width: 100%;
             overflow-x: auto;
             justify-content: flex-start;
             border-radius: 18px !important;
             margin-bottom: 1.5rem !important;
-            padding: 0.28rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding: 4px !important;
             scrollbar-width: none;
           }
           .audience-tabs::-webkit-scrollbar {
@@ -590,6 +594,7 @@ export default function AudienceSection() {
             flex: 0 0 auto;
             white-space: nowrap;
             padding: 0.52rem 1rem !important;
+            border-radius: 14px !important;
             font-size: 0.78rem !important;
           }
           .audience-photo-side {
@@ -641,41 +646,5 @@ export default function AudienceSection() {
         }
       `}</style>
     </section>
-  );
-}
-
-/* ── PremiumCard ── */
-function PremiumCard({ children, className = "", style = {}, id }) {
-  return (
-    <div
-      id={id}
-      className={className}
-      style={{
-        position: "relative",
-        zIndex: 10,
-        borderRadius: 16,
-        overflow: "hidden",
-        ...style,
-      }}
-    >
-      {/* Inner shimmer border */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 20,
-          border: "1px solid transparent",
-          borderRadius: "inherit",
-          background:
-            "linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 100%) border-box",
-          WebkitMask:
-            "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "destination-out",
-          maskComposite: "exclude",
-        }}
-      />
-      {children}
-    </div>
   );
 }
