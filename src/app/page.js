@@ -100,6 +100,7 @@ export default function Home() {
   const canvasRef    = useRef(null);
   const navRef       = useRef(null);
   const headerRef    = useRef(null);
+  const heroOverlayRef = useRef(null);
   const heroImgRef   = useRef(null);
   const contextRef   = useRef(null);
   const imagesRef    = useRef([]);
@@ -307,6 +308,7 @@ export default function Home() {
           const phoneTiltY = isMobile ? 0 : -35;
           framesRef.current.frame = Math.round(ease(p) * (FC - 1));
           draw();
+          gsap.set(heroOverlayRef.current, { opacity: 1 - p });
 
           if (p <= 0.5) {
             const hp = p / 0.5;
@@ -399,10 +401,10 @@ export default function Home() {
       {/* ════════════════════════════════════════════ HERO */}
       <section className="hero">
         <canvas ref={canvasRef} />
-        <div className="hero-overlay" />
+        <div className="hero-overlay" ref={heroOverlayRef} />
         <div className="hero-content">
           <div className="header" ref={headerRef}>
-            <p className="launch-text">DIFC · Marina · Downtown · Jumeirah</p>
+            <p className="launch-text">Bangkok · Istanbul · Dubai · Singapore · Phuket · Bali</p>
             <h1>Know a guy,<br /><em style={{ fontStyle: "italic" }}>everywhere.</em></h1>
             <p className="subtitle">
               One conversation. Private chefs, last-minute villas, hidden

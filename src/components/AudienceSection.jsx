@@ -10,52 +10,61 @@ import { CheckCircle2 } from "lucide-react";
 
 const TABS = [
   {
-    id: "travellers",
-    label: "Travellers",
+    id: "explore",
+    label: "Explore",
     type: "B2C",
-    photo: "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=1400&q=85",
-    headline: "Your city. Unlocked.",
-    body: "IKAG is your personal guide to every destination. Skip the tourist traps — get the hidden tables, private clubs, and local fixers that most people never find.",
+    photo: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1400&q=85",
+    headline: "Land anywhere already connected.",
+    body: "Travellers use IKAG to discover where to go, chat through plans, and get trusted help for restaurants, stays, drivers, chefs, and last-minute requests.",
     bullets: [
-      "Private chef access",
-      "Curated nightlife & dining",
-      "Last-minute villas",
-      "One conversation, handled",
+      "Discover trusted local spots",
+      "Chat to plan the trip",
+      "Book stays, drivers, and services",
+      "Manage every request in one app",
     ],
-    metric: "Save hours in every city",
+    metric: "B2C travel app",
     cta: "Join the Waitlist",
   },
   {
-    id: "airbnb",
-    label: "Airbnb Hosts",
+    id: "hospitality",
+    label: "Hospitality",
     type: "B2B",
-    photo: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1400&q=85",
-    headline: "Turn your listing into a five-star experience.",
-    body: "Offer your guests IKAG as a built-in perk. Restaurants, drivers, chefs — all arranged before they even arrive. Listings with IKAG access command higher rates and better reviews.",
-    bullets: [
-      "White-label guest portal",
-      "Pre-arrival experience curation",
-      "Higher booking rates",
-      "Zero effort on your end",
+    screenshots: [
+      "/Screens/Hospitality_Stay.png",
+      "/Screens/Hospitality_Chat.png",
     ],
-    metric: "Better reviews, higher ADR",
+    backgroundPhoto: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1400&q=85",
+    headline: "A guest experience layer for stays.",
+    body: "For Airbnb hosts, serviced apartments, and hotels, IKAG gives guests a simple way to discover, chat, and manage requests without adding pressure to your team.",
+    bullets: [
+      "Airbnb and hotel guest portal",
+      "Pre-arrival and in-stay requests",
+      "Concierge-style chat support",
+      "Property-level service management",
+    ],
+    metric: "B2B hospitality solution",
     cta: "Partner with Us",
   },
   {
-    id: "hotels",
-    label: "Hotels",
+    id: "community",
+    label: "Community",
     type: "B2B",
-    photo: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1400&q=85",
-    headline: "The concierge desk, reimagined.",
-    body: "Give your guests a 24/7 AI concierge that knows the city better than any desk ever could. IKAG integrates with your property to extend your service offering — branded, seamless, and scalable.",
-    bullets: [
-      "Branded guest-facing integration",
-      "Off-property experience layer",
-      "Revenue share on bookings",
-      "Scalable across properties",
+    screenshots: [
+      "/Screens/Community_Map.png",
+      "/Screens/Community_Feed.png",
+      "/Screens/Community_Events.png",
     ],
-    metric: "24/7 off-property coverage",
-    cta: "Explore Partnership",
+    backgroundPhoto: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&q=85",
+    headline: "Give your community a private hub.",
+    body: "For residential buildings, private members' clubs, and communities, IKAG helps people discover what is available, chat with the right contact, and manage community requests from one place.",
+    bullets: [
+      "Private community discovery",
+      "Member and resident chat",
+      "Amenities, events, and requests",
+      "Community management tools",
+    ],
+    metric: "B2B community solution",
+    cta: "Explore Community",
   },
 ];
 
@@ -189,7 +198,7 @@ export default function AudienceSection() {
           }}
         >
           <SectionBadge>
-            B2C · B2B
+            Explore · Hospitality · Community
           </SectionBadge>
 
           <h2
@@ -204,10 +213,10 @@ export default function AudienceSection() {
               margin: "0 auto",
             }}
           >
-            For travellers.
+            For guests.
             <br />
             <em style={{ fontStyle: "italic", color: "#2d3a24" }}>
-              For the places they stay.
+              For the places they belong.
             </em>
           </h2>
 
@@ -222,7 +231,7 @@ export default function AudienceSection() {
               lineHeight: 1.6,
             }}
           >
-            IKAG serves guests directly — and partners with Airbnb hosts and hotels to elevate every stay.
+            Discover the city, chat through requests, and manage the property or community experience from one app.
           </p>
         </div>
 
@@ -297,21 +306,76 @@ export default function AudienceSection() {
                 }}
                 className="audience-photo-side"
               >
-                <img
-                  src={tab.photo}
-                  alt={tab.headline}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    zIndex: 0,
-                    opacity: 0.88,
-                    transition: "opacity 0.4s ease",
-                  }}
-                />
+                {tab.screenshots ? (
+                  <div
+                    className="audience-screen-collage"
+                    aria-label={`IKAG ${tab.label.toLowerCase()} app screens`}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      zIndex: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "clamp(0.45rem, 1.4vw, 0.9rem)",
+                      padding: "2rem 1.4rem",
+                      background:
+                        tab.backgroundPhoto
+                          ? `linear-gradient(rgba(15,13,10,0.58), rgba(15,13,10,0.8)), radial-gradient(ellipse at 50% 45%, rgba(108,117,7,0.24) 0%, rgba(15,13,10,0.1) 68%), url(${tab.backgroundPhoto}) center / cover`
+                          : "radial-gradient(ellipse at 50% 45%, rgba(108,117,7,0.28) 0%, rgba(15,13,10,0.94) 68%)",
+                    }}
+                  >
+                    {tab.screenshots.map((screen, index) => {
+                      const hasThreeScreens = tab.screenshots.length === 3;
+
+                      return (
+                        <img
+                          key={screen}
+                          className="audience-screen-image"
+                          src={screen}
+                          alt=""
+                          aria-hidden="true"
+                          style={{
+                            width: hasThreeScreens
+                              ? index === 1 ? "32%" : "28%"
+                              : index === 0 ? "36%" : "34%",
+                            maxWidth: hasThreeScreens ? "150px" : "172px",
+                            height: "auto",
+                            objectFit: "contain",
+                            borderRadius: "18px",
+                            boxShadow: "0 18px 46px rgba(0,0,0,0.45)",
+                            border: "1px solid rgba(255,255,255,0.14)",
+                            transform: hasThreeScreens
+                              ? index === 0
+                                ? "translateY(1.2rem) rotate(-5deg)"
+                                : index === 2
+                                  ? "translateY(1.2rem) rotate(5deg)"
+                                  : "translateY(-0.35rem)"
+                              : index === 0
+                                ? "translateY(0.7rem) rotate(-5deg)"
+                                : "translateY(-0.35rem) rotate(5deg)",
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <img
+                    src={tab.photo}
+                    alt={tab.headline}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      zIndex: 0,
+                      opacity: 0.88,
+                      transition: "opacity 0.4s ease",
+                    }}
+                  />
+                )}
                 <div
                   style={{
                     position: "absolute",
@@ -333,6 +397,7 @@ export default function AudienceSection() {
 
                 {/* Tab label + type watermark on photo */}
                 <div
+                  className="audience-image-labels"
                   style={{
                     position: "absolute",
                     top: "1.75rem",
@@ -348,8 +413,18 @@ export default function AudienceSection() {
                     fontSize: "0.6rem",
                     textTransform: "uppercase",
                     letterSpacing: "0.16em",
-                    color: "rgba(255,255,255,0.4)",
+                    textIndent: "0.16em",
+                    lineHeight: 1,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "rgba(255,255,255,0.82)",
                     fontWeight: 500,
+                    background: "rgba(15,13,10,0.56)",
+                    border: "1px solid rgba(255,255,255,0.16)",
+                    borderRadius: "9999px",
+                    padding: "calc(0.24rem + 2px) 0.56rem",
+                    backdropFilter: "blur(10px)",
                   }}>
                     {tab.label}
                   </span>
@@ -358,11 +433,17 @@ export default function AudienceSection() {
                     fontSize: "0.55rem",
                     textTransform: "uppercase",
                     letterSpacing: "0.12em",
-                    color: tab.type === "B2B" ? "rgba(108,117,7,0.9)" : "rgba(255,255,255,0.35)",
-                    background: tab.type === "B2B" ? "rgba(108,117,7,0.18)" : "rgba(255,255,255,0.08)",
-                    padding: "0.15rem 0.5rem",
+                    textIndent: "0.12em",
+                    lineHeight: 1,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: tab.type === "B2B" ? "rgba(245,248,238,0.95)" : "rgba(255,255,255,0.86)",
+                    background: tab.type === "B2B" ? "rgba(108,117,7,0.72)" : "rgba(15,13,10,0.56)",
+                    padding: "calc(0.24rem + 2px) 0.56rem",
                     borderRadius: "9999px",
-                    border: `1px solid ${tab.type === "B2B" ? "rgba(108,117,7,0.35)" : "rgba(255,255,255,0.15)"}`,
+                    border: `1px solid ${tab.type === "B2B" ? "rgba(232,237,224,0.34)" : "rgba(255,255,255,0.16)"}`,
+                    backdropFilter: "blur(10px)",
                   }}>
                     {tab.type}
                   </span>
@@ -555,6 +636,9 @@ export default function AudienceSection() {
           outline: 2px solid rgba(45,58,36,0.55);
           outline-offset: 3px;
         }
+        .audience-screen-image {
+          max-height: calc(100% - 4rem);
+        }
         @media (max-width: 768px) {
           .audience-section {
             padding-top: 5rem !important;
@@ -602,6 +686,22 @@ export default function AudienceSection() {
             min-height: 230px !important;
             max-height: 255px !important;
           }
+          .audience-screen-collage {
+            padding: 1.35rem 1rem !important;
+          }
+          .audience-screen-image {
+            width: auto !important;
+            max-width: 31% !important;
+            max-height: calc(100% - 2.2rem) !important;
+          }
+          .audience-screen-collage .audience-screen-image:nth-child(2) {
+            max-width: 34% !important;
+          }
+          .audience-image-labels {
+            top: 1rem !important;
+            left: 1rem !important;
+            gap: 0.4rem !important;
+          }
           .audience-card-wrap > div > div {
             flex-direction: column !important;
             min-height: auto !important;
@@ -642,6 +742,9 @@ export default function AudienceSection() {
           }
           .audience-photo-side {
             min-height: 210px !important;
+          }
+          .audience-screen-image {
+            max-height: calc(100% - 1.8rem) !important;
           }
         }
       `}</style>
