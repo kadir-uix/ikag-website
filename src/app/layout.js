@@ -4,6 +4,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ika-solutions.com";
 const title = "IKAG | AI Travel Concierge";
 const description =
   "IKAG is a private AI travel concierge for curated stays, dining, wellness, local recommendations, and on-demand guest requests.";
+const ogImage = {
+  url: "/og-image.png",
+  width: 1200,
+  height: 630,
+  alt: "IKAG AI travel concierge",
+};
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
@@ -37,20 +43,13 @@ export const metadata = {
     siteName: "IKAG",
     title,
     description,
-    images: [
-      {
-        url: "/Mobile_screen.png",
-        width: 1200,
-        height: 630,
-        alt: "IKAG AI travel concierge app screen",
-      },
-    ],
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
-    images: ["/Mobile_screen.png"],
+    images: [ogImage.url],
   },
   robots: {
     index: true,
