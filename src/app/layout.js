@@ -1,8 +1,84 @@
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ika-solutions.com";
+const title = "IKAG | AI Travel Concierge";
+const description =
+  "IKAG is a private AI travel concierge for curated stays, dining, wellness, local recommendations, and on-demand guest requests.";
+
 export const metadata = {
-  title: "IKAG — Know a guy, everywhere.",
-  description: "Your ultimate AI travel concierge. From exclusive bookings to hidden local gems, the world is at your fingertips.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: title,
+    template: "%s | IKAG",
+  },
+  description,
+  applicationName: "IKAG",
+  keywords: [
+    "IKAG",
+    "AI travel concierge",
+    "private travel concierge",
+    "luxury travel app",
+    "Dubai concierge",
+    "hotel guest experience",
+    "travel recommendations",
+    "dining reservations",
+    "wellness bookings",
+  ],
+  authors: [{ name: "IKAG" }],
+  creator: "IKAG",
+  publisher: "IKAG",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "IKAG",
+    title,
+    description,
+    images: [
+      {
+        url: "/Mobile_screen.png",
+        width: 1200,
+        height: 630,
+        alt: "IKAG AI travel concierge app screen",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/Mobile_screen.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
+  category: "travel",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }) {

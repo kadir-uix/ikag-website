@@ -290,6 +290,7 @@ canvas {
 }
 
 .waitlist-form {
+  position: relative;
   display: flex;
   align-items: center;
   background: rgba(5, 5, 4, 0.58);
@@ -300,8 +301,25 @@ canvas {
   width: 100%;
   max-width: 420px;
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.waitlist-form::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(45, 58, 36, 0.42), rgba(5, 5, 4, 0) 72%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
 }
 .waitlist-form input {
+  position: relative;
+  z-index: 1;
   flex: 1;
   border: none;
   background: transparent;
@@ -311,11 +329,14 @@ canvas {
   outline: none;
   color: var(--white);
   min-width: 0;
+  text-align: left;
 }
 .waitlist-form input::placeholder {
   color: rgba(255, 255, 255, 0.35);
 }
 .waitlist-form button {
+  position: relative;
+  z-index: 1;
   background: var(--white);
   color: var(--fg);
   border: none;
@@ -334,6 +355,25 @@ canvas {
 .waitlist-form button:disabled {
   cursor: wait;
   opacity: 0.72;
+}
+.waitlist-form .waitlist-company-field {
+  position: absolute;
+  z-index: -1;
+  left: -10000px;
+  top: auto;
+  width: 0.1px;
+  height: 0.1px;
+  flex: 0 0 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  background: transparent;
+  opacity: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  pointer-events: none;
+  appearance: none;
 }
 .hero-proof-chips {
   display: flex;
@@ -357,6 +397,9 @@ canvas {
   white-space: nowrap;
 }
 .waitlist-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 0.85rem;
   font-family: var(--font-mono);
   font-size: 0.66rem;
@@ -365,35 +408,39 @@ canvas {
   color: rgba(255, 255, 255, 0.46);
 }
 .waitlist-status.success {
-  color: rgba(232, 237, 224, 0.78);
+  border: 1px solid rgba(163, 190, 129, 0.42);
+  border-radius: var(--radius-pill);
+  padding: 0.52rem 0.82rem;
+  background: rgba(45, 58, 36, 0.72);
+  color: rgba(232, 237, 224, 0.92);
+  box-shadow: 0 12px 34px rgba(45, 58, 36, 0.34);
 }
 .waitlist-status.error {
   color: rgba(255, 190, 170, 0.86);
 }
+.waitlist-disclaimer {
+  width: max-content;
+  max-width: min(92vw, 760px);
+  margin-top: 0.75rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-align: center;
+  text-transform: none;
+  text-wrap: balance;
+}
 
-/* ── Waitlist form border trace ────────────────────────── */
-@property --border-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0turn;
-}
 .waitlist-form:focus-within {
-  animation: border-trace 0.65s ease forwards;
-  border-color: transparent;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)),
-    conic-gradient(
-      from var(--border-angle),
-      rgba(255, 255, 255, 0.55) 20%,
-      rgba(255, 255, 255, 0.1) 80%
-    );
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+  border-color: rgba(163, 190, 129, 0.38);
+  background-color: rgba(5, 5, 4, 0.64);
+  box-shadow:
+    inset 0 -18px 34px rgba(163, 190, 129, 0.12),
+    0 18px 54px rgba(45, 58, 36, 0.24);
 }
-@keyframes border-trace {
-  to {
-    --border-angle: 1turn;
-  }
+.waitlist-form:focus-within::before {
+  opacity: 1;
 }
 
 .scroll-hint {
@@ -1908,6 +1955,9 @@ canvas {
   max-width: 360px;
   line-height: 1.6;
 }
+.outro-waitlist-form {
+  margin-top: 0.35rem;
+}
 
 /* ── Footer ────────────────────────────────────────────── */
 .footer-editorial {
@@ -2600,7 +2650,7 @@ canvas {
   .map-phone {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 38%;
     transform: translate(-50%, -50%) !important;
   }
   .phone:hover {
@@ -2620,7 +2670,7 @@ canvas {
     min-height: 210px;
   }
   .city-map {
-    min-height: 760px;
+    min-height: 820px;
     border-radius: 22px;
   }
   .map-pin-card {
@@ -2628,21 +2678,21 @@ canvas {
   }
   .map-pin-card:nth-of-type(1) {
     left: 7% !important;
-    top: 8% !important;
+    top: 52% !important;
   }
   .map-pin-card:nth-of-type(2) {
     left: auto !important;
     right: 7% !important;
-    top: 22% !important;
+    top: 61% !important;
   }
   .map-pin-card:nth-of-type(3) {
     left: 8% !important;
-    top: 58% !important;
+    top: 71% !important;
   }
   .map-pin-card:nth-of-type(4) {
     left: auto !important;
     right: 7% !important;
-    top: 72% !important;
+    top: 80% !important;
   }
   .story-grid {
     grid-template-columns: 1fr;
@@ -2744,12 +2794,29 @@ canvas {
   }
   .waitlist-form input {
     width: 100%;
-    text-align: center;
+    text-align: left;
     padding: 0.85rem 1rem;
   }
   .waitlist-form button {
     width: 100%;
     padding: 0.85rem 1rem;
+  }
+  .outro-waitlist-form {
+    border-radius: var(--radius-pill);
+    flex-direction: row;
+    align-items: center;
+    max-width: min(100%, 360px) !important;
+    padding: 0.3rem;
+  }
+  .outro-waitlist-form input {
+    width: auto;
+    text-align: left;
+    padding: 0.7rem 1rem;
+  }
+  .outro-waitlist-form button {
+    width: auto;
+    padding: 0.7rem 1rem;
+    flex: 0 0 auto;
   }
   .footer-nav-cols {
     display: grid;
@@ -2861,7 +2928,7 @@ canvas {
     transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%) !important;
   }
   .city-map {
-    min-height: 720px;
+    min-height: 800px;
   }
   .map-pin-card {
     width: min(185px, 72vw);

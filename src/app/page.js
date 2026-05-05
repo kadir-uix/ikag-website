@@ -66,11 +66,12 @@ function WaitlistForm({
   loading,
   onSubmit,
   buttonClassName = "",
+  className = "",
   style,
 }) {
   return (
     <form
-      className="waitlist-form"
+      className={`waitlist-form ${className}`.trim()}
       onSubmit={onSubmit}
       data-source={source}
       style={style}
@@ -83,6 +84,14 @@ function WaitlistForm({
         autoComplete="email"
         required
       />
+      <input
+        className="waitlist-company-field"
+        name="company"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
       <button type="submit" className={buttonClassName} disabled={loading}>
         {loading ? "Joining" : label}
       </button>
@@ -93,6 +102,25 @@ function WaitlistForm({
 function WaitlistStatus({ state }) {
   if (!state.message) return null;
   return <p className={`waitlist-status ${state.status}`}>{state.message}</p>;
+}
+
+function WaitlistDisclaimer() {
+  return (
+    <p className="waitlist-disclaimer">
+      We will only use your email to send you important updates regarding our official launch.
+    </p>
+  );
+}
+
+async function readJsonResponse(response) {
+  const text = await response.text();
+  if (!text) return null;
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
 export default function Home() {
@@ -128,6 +156,7 @@ export default function Home() {
     const formData = new FormData(form);
     const email = String(formData.get("email") || "").trim();
     const source = form.dataset.source || "waitlist";
+    const company = String(formData.get("company") || "").trim();
 
     if (!email) {
       setWaitlistState({ status: "error", message: "Enter an email first." });
@@ -140,9 +169,9 @@ export default function Home() {
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source }),
+        body: JSON.stringify({ email, source, company }),
       });
-      const result = await response.json();
+      const result = await readJsonResponse(response);
 
       if (!response.ok) {
         throw new Error(result?.error || "Could not join waitlist.");
@@ -158,28 +187,6 @@ export default function Home() {
       });
     }
   };
-
-  // City ticker
-  useEffect(() => {
-    const cities = [
-      "DIFC · Marina · Downtown · Jumeirah",
-      "Palm · Business Bay · Alserkal · Creek",
-      "JBR · City Walk · Kite Beach · Deira",
-      "Bluewaters · Nad Al Sheba · Hatta · Creek Harbour",
-    ];
-    let idx = 0;
-    const el = document.querySelector(".launch-text");
-    if (!el) return;
-    const interval = setInterval(() => {
-      el.style.opacity = "0";
-      setTimeout(() => {
-        idx = (idx + 1) % cities.length;
-        el.textContent = cities[idx];
-        el.style.opacity = "1";
-      }, 400);
-    }, 3200);
-    return () => clearInterval(interval);
-  }, []);
 
   // Delight effects — magnetic buttons, center phone glow, watermark parallax
   useEffect(() => {
@@ -408,14 +415,15 @@ export default function Home() {
             <h1>Know a guy,<br /><em style={{ fontStyle: "italic" }}>everywhere.</em></h1>
             <p className="subtitle">
               One conversation. Private chefs, last-minute villas, hidden
-              tables — wherever you land, IKAG already knows someone.
+              tables. Wherever you land, IKAG already knows someone.
             </p>
             <WaitlistForm
               source="hero"
-              label="Early Access"
+              label="Notify Me"
               loading={waitlistState.status === "loading"}
               onSubmit={handleWaitlistSubmit}
             />
+            <WaitlistDisclaimer />
             <div className="hero-proof-chips" aria-label="IKAG can arrange">
               {["Private tables", "Drivers", "Villas", "Handled in chat"].map((chip) => (
                 <span key={chip}>{chip}</span>
@@ -635,12 +643,14 @@ export default function Home() {
           </p>
           <WaitlistForm
             source="outro"
-            label="Request access"
+            label="Notify Me"
             loading={waitlistState.status === "loading"}
             onSubmit={handleWaitlistSubmit}
+            className="outro-waitlist-form"
             buttonClassName="btn-outro"
             style={{ maxWidth: 420 }}
           />
+          <WaitlistDisclaimer />
           <WaitlistStatus state={waitlistState} />
           <div style={{ display: "flex", gap: "2rem", opacity: 0.3, marginTop: "2.5rem", flexWrap: "wrap", justifyContent: "center" }}>
             {["DIFC", "Marina", "Downtown", "Jumeirah"].map((c) => (
