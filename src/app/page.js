@@ -60,6 +60,8 @@ const STAY_COLUMNS = [
   ["Departure", ["Express checkout enabled", "Late departure (2 PM)", "Airport transfer briefed"]],
 ];
 
+const WEB3FORMS_ACCESS_KEY = "c216436b-6c56-4e2f-aad4-9ae69f15dfe6";
+
 function WaitlistForm({
   source,
   label,
@@ -158,6 +160,12 @@ export default function Home() {
     const source = form.dataset.source || "waitlist";
     const company = String(formData.get("company") || "").trim();
 
+    if (company) {
+      form.reset();
+      setWaitlistState({ status: "success", message: "You're on the early access list." });
+      return;
+    }
+
     if (!email) {
       setWaitlistState({ status: "error", message: "Enter an email first." });
       return;
@@ -166,15 +174,20 @@ export default function Home() {
     setWaitlistState({ status: "loading", message: "Joining..." });
 
     try {
-      const response = await fetch("/api/waitlist", {
+      formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+      formData.append("subject", `IKAG waitlist request from ${source}`);
+      formData.append("from_name", "IKAG Website");
+      formData.append("source", source);
+      formData.append("message", `${email} requested IKAG early access from the ${source} form.`);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source, company }),
+        body: formData,
       });
       const result = await readJsonResponse(response);
 
-      if (!response.ok) {
-        throw new Error(result?.error || "Could not join waitlist.");
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Could not join waitlist.");
       }
 
       window.localStorage?.setItem("ikag_waitlist_email", email);

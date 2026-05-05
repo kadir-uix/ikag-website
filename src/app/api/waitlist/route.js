@@ -37,23 +37,33 @@ export async function POST(request) {
     createdAt: new Date().toISOString(),
   };
 
-  if (process.env.WEB3FORMS_ACCESS_KEY) {
-    const formData = new FormData();
-    formData.append("access_key", process.env.WEB3FORMS_ACCESS_KEY);
-    formData.append("email", email);
-    formData.append("source", source);
-    formData.append("subject", `IKAG waitlist request from ${source}`);
-    formData.append("from_name", "IKAG Website");
-    formData.append("message", `${email} requested IKAG early access from the ${source} form.`);
+  const web3FormsAccessKey = process.env.WEB3FORMS_ACCESS_KEY?.trim();
 
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await readJsonResponse(response);
+  if (web3FormsAccessKey) {
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: web3FormsAccessKey,
+          name: "IKAG waitlist",
+          email,
+          source,
+          subject: `IKAG waitlist request from ${source}`,
+          from_name: "IKAG Website",
+          message: `${email} requested IKAG early access from the ${source} form.`,
+        }),
+      });
+      const result = await readJsonResponse(response);
 
-    if (!response.ok || !result?.success) {
-      return Response.json({ error: result?.message || "Waitlist service unavailable." }, { status: 502 });
+      if (!response.ok || !result?.success) {
+        return Response.json({ error: result?.message || "Waitlist service unavailable." }, { status: 502 });
+      }
+    } catch {
+      return Response.json({ error: "Waitlist service unavailable." }, { status: 502 });
     }
   } else if (process.env.WAITLIST_WEBHOOK_URL) {
     const response = await fetch(process.env.WAITLIST_WEBHOOK_URL, {
