@@ -54,10 +54,10 @@ const STORY_NOTES = [
 ];
 
 const STAY_COLUMNS = [
-  ["Before arrival", ["Airport pickup assigned", "Villa host briefed", "Welcome groceries requested"]],
-  ["At check-in", ["Suite ready at 3:00", "Keys under guest name", "Late bag drop approved"]],
-  ["Tonight", ["Dinner name at door", "Driver waits nearby", "Backup table held"]],
-  ["Tomorrow", ["Spa slot requested", "Late checkout pending", "Beach club shortlist"]],
+  ["Arrival", ["Mobile check-in completed", "Room 402 assigned", "Luggage held in storage"]],
+  ["Room Preferences", ["Hypoallergenic pillows", "High floor requested", "Mini-bar restocked"]],
+  ["In-Stay Services", ["Laundry pickup 10:00 AM", "Turndown service at 6:00 PM", "Spa slot confirmed"]],
+  ["Departure", ["Express checkout enabled", "Late departure (2 PM)", "Airport transfer briefed"]],
 ];
 
 function WaitlistForm({
@@ -463,7 +463,10 @@ export default function Home() {
 
           <div className="ledger-board">
             <div className="ledger-phone">
-              <PhoneMockup src="/Screens/Onboarding_03.png" alt="Interest selection" width={260} height={560} />
+              <div className="ledger-phones">
+                <PhoneMockup src="/Screens/Identity_first_01.png" alt="Identity selection 1" width={260} height={560} />
+                <PhoneMockup src="/Screens/Identity_first_02.png" alt="Identity selection 2" width={260} height={560} />
+              </div>
             </div>
             {LEDGER_ROWS.map(([label, value, meta]) => (
               <article className="ledger-row" key={label}>
@@ -576,7 +579,7 @@ export default function Home() {
             </div>
           </div>
           <div className="story-phone">
-            <PhoneMockup src="/Screens/Community02.png" alt="Community feed" width={280} height={600} />
+            <PhoneMockup src="/Screens/Restaurant.png" alt="Community feed" width={280} height={600} />
           </div>
         </div>
       </section>
@@ -609,7 +612,10 @@ export default function Home() {
             </div>
           ))}
           <div className="stay-phone">
-            <PhoneMockup src="/Screens/My_Stay_06.png" alt="Stay request tracking" width={240} height={510} />
+            <div className="stay-phones">
+              <PhoneMockup src="/Screens/Your_Stay_perfectly_managed.png" alt="Stay management 1" width={240} height={510} />
+              <PhoneMockup src="/Screens/Your_Stay_perfectly_managed_02.png" alt="Stay management 2" width={240} height={510} />
+            </div>
           </div>
         </div>
       </section>

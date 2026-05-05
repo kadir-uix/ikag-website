@@ -1324,6 +1324,28 @@ canvas {
   border: 0;
   box-shadow: 0 35px 90px rgba(0, 0, 0, 0.32);
 }
+.ledger-phones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  height: 600px;
+}
+.ledger-phones .phone {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.ledger-phones .phone:first-child {
+  transform: translate(-75%, -50%) rotate(-5deg) translateX(-25%) translateY(10px);
+  z-index: 1;
+}
+.ledger-phones .phone:last-child {
+  transform: translate(-75%, -50%) rotate(3deg) translateX(25%) translateY(-10px);
+  z-index: 2;
+}
 .ledger-row,
 .command-card,
 .command-step,
@@ -1495,12 +1517,13 @@ canvas {
 .map-grid {
   position: absolute;
   inset: -20%;
-  opacity: 0.42;
+  opacity: 0.18;
   background-image:
-    linear-gradient(rgba(15, 13, 10, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 13, 10, 0.08) 1px, transparent 1px);
-  background-size: 80px 80px;
-  transform: rotate(-8deg);
+    url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q100 100 100 0 M100 400 Q100 300 200 300 M400 100 Q300 100 300 200 M200 0 Q200 100 300 100 M0 300 Q100 300 100 400 M300 400 Q300 300 400 300 M200 200 L200 400 M0 200 L100 200 M300 0 L300 100 M200 0 L200 100' stroke='%230f0d0a' stroke-width='0.5' fill='none' opacity='0.4'/%3E%3Cpath d='M50 0 L50 400 M350 0 L350 400 M0 50 L400 50 M0 350 L400 350' stroke='%230f0d0a' stroke-width='0.3' fill='none' opacity='0.2'/%3E%3C/svg%3E"),
+    linear-gradient(rgba(15, 13, 10, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 13, 10, 0.05) 1px, transparent 1px);
+  background-size: 400px 400px, 80px 80px, 80px 80px;
+  transform: rotate(-4deg);
 }
 .map-pin-card {
   position: absolute;
@@ -1669,8 +1692,30 @@ canvas {
   position: absolute;
   right: clamp(1rem, 4vw, 3rem);
   bottom: -4rem;
-  transform: rotate(4deg);
-  opacity: 0.86;
+  opacity: 1;
+  z-index: 5;
+}
+.stay-phones {
+  position: relative;
+  width: 320px;
+  height: 580px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.stay-phones .phone {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.stay-phones .phone:first-child {
+  transform: translate(-50%, -50%) rotate(-4deg) translateX(-25%);
+  z-index: 1;
+}
+.stay-phones .phone:last-child {
+  transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%);
+  z-index: 2;
 }
 
 .stays-feature .feature-inner {
@@ -2148,6 +2193,9 @@ canvas {
     letter-spacing: 0.06em;
   }
 
+  .ledger-inner {
+    gap: 0;
+  }
   .hero {
     min-height: 100svh;
     padding: 0;
@@ -2484,12 +2532,16 @@ canvas {
   .dossier-head {
     text-align: center;
     align-items: center;
+    gap: 0;
   }
   .ledger-note {
-    border-left: 0;
-    border-top: 1px solid rgba(108, 117, 7, 0.55);
-    padding-left: 0;
-    padding-top: 1rem;
+    border-left: 1px solid rgba(108, 117, 7, 0.55);
+    border-top: 0;
+    padding-left: 1rem;
+    padding-top: 0;
+    text-align: left;
+    max-width: 320px;
+    margin-top: 0.75rem;
   }
   .ledger-copy h2,
   .command-head h2,
@@ -2506,6 +2558,27 @@ canvas {
     padding: 2rem 1rem;
     grid-row: auto;
   }
+  .ledger-phones {
+    height: 480px;
+    margin-bottom: 1rem;
+    position: relative;
+    width: 100%;
+  }
+  .ledger-phones .phone {
+    width: min(44vw, 175px) !important;
+    height: min(92vw, 370px) !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+  .ledger-phones .phone:first-child {
+    transform: translate(-50%, -50%) rotate(-4deg) translateX(-25%) !important;
+    z-index: 1;
+  }
+  .ledger-phones .phone:last-child {
+    transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%) !important;
+    z-index: 2;
+  }
   .ledger-phone .phone,
   .command-phone .phone,
   .map-phone .phone,
@@ -2520,11 +2593,15 @@ canvas {
   .community-visual .phone,
   .stays-visual .phone,
   .command-phone,
-  .map-phone,
   .story-phone .phone,
-  .stay-phone,
-  .stay-phone .phone {
+  .stay-phone {
     transform: none !important;
+  }
+  .map-phone {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) !important;
   }
   .phone:hover {
     transform: none;
@@ -2590,6 +2667,7 @@ canvas {
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     padding-bottom: 1rem;
+    align-items: center;
   }
   .stay-board::-webkit-scrollbar {
     display: none;
@@ -2600,10 +2678,36 @@ canvas {
     scroll-snap-align: start;
   }
   .stay-phone {
-    flex: 0 0 min(64vw, 260px);
+    flex: 0 0 min(85vw, 360px);
     scroll-snap-align: start;
-    min-height: 360px;
+    min-height: 480px;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    position: relative;
+  }
+  .stay-phones {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .stay-phones .phone {
+    width: min(44vw, 175px) !important;
+    height: min(92vw, 370px) !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+  .stay-phones .phone:first-child {
+    transform: translate(-50%, -50%) rotate(-4deg) translateX(-25%) !important;
+    z-index: 1;
+  }
+  .stay-phones .phone:last-child {
+    transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%) !important;
+    z-index: 2;
   }
 }
 
@@ -2728,6 +2832,33 @@ canvas {
   .stay-phone .phone {
     width: min(62vw, 210px) !important;
     height: min(130vw, 440px) !important;
+  }
+  .ledger-phones {
+    height: 400px;
+  }
+  .ledger-phones .phone {
+    width: min(48vw, 175px) !important;
+    height: min(100vw, 370px) !important;
+    left: 50%;
+    top: 50%;
+  }
+  .ledger-phones .phone:first-child {
+    transform: translate(-50%, -50%) rotate(-4deg) translateX(-25%) !important;
+  }
+  .ledger-phones .phone:last-child {
+    transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%) !important;
+  }
+  .stay-phones .phone {
+    width: min(48vw, 175px) !important;
+    height: min(100vw, 370px) !important;
+    left: 50%;
+    top: 50%;
+  }
+  .stay-phones .phone:first-child {
+    transform: translate(-50%, -50%) rotate(-4deg) translateX(-25%) !important;
+  }
+  .stay-phones .phone:last-child {
+    transform: translate(-50%, -50%) rotate(2.5deg) translateX(25%) !important;
   }
   .city-map {
     min-height: 720px;
