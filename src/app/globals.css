@@ -276,6 +276,7 @@ section {
   margin-bottom: 2rem;
   font-family: var(--font-mono);
   transition: opacity 0.4s ease;
+  white-space: nowrap;
 }
 
 .header h1 {

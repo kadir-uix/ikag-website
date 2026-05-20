@@ -53,6 +53,8 @@ const STORY_NOTES = [
   ["Palm", "Beach club table that answers fast", "Use when weekend plans move."],
 ];
 
+const HERO_CITIES = ["Bangkok", "Istanbul", "Dubai", "Singapore", "Phuket", "Bali"];
+
 const STAY_COLUMNS = [
   ["Arrival", ["Mobile check-in completed", "Room 402 assigned", "Luggage held in storage"]],
   ["Room Preferences", ["Hypoallergenic pillows", "High floor requested", "Mini-bar restocked"]],
@@ -134,8 +136,19 @@ export default function Home() {
   const heroImgRef   = useRef(null);
   const lenisRef     = useRef(null);
   const [waitlistState, setWaitlistState] = useState({ status: "idle", message: "" });
+  const [heroCityIndex, setHeroCityIndex] = useState(0);
 
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const interval = window.setInterval(() => {
+      setHeroCityIndex((index) => (index + 1) % HERO_CITIES.length);
+    }, 1800);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -398,7 +411,9 @@ export default function Home() {
         <div className="hero-overlay" ref={heroOverlayRef} />
         <div className="hero-content">
           <div className="header" ref={headerRef}>
-            <p className="launch-text">Bangkok · Istanbul · Dubai · Singapore · Phuket · Bali</p>
+            <p className="launch-text">
+              {Array.from({ length: 3 }, (_, offset) => HERO_CITIES[(heroCityIndex + offset) % HERO_CITIES.length]).join(" · ")}
+            </p>
             <h1>Know a guy,<br /><em style={{ fontStyle: "italic" }}>everywhere.</em></h1>
             <p className="subtitle">
               One conversation. Private chefs, last-minute villas, hidden
