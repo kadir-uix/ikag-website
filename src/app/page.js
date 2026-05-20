@@ -127,14 +127,11 @@ async function readJsonResponse(response) {
 
 export default function Home() {
   const containerRef = useRef(null);
-  const canvasRef    = useRef(null);
+  const videoRef     = useRef(null);
   const navRef       = useRef(null);
   const headerRef    = useRef(null);
   const heroOverlayRef = useRef(null);
   const heroImgRef   = useRef(null);
-  const contextRef   = useRef(null);
-  const imagesRef    = useRef([]);
-  const framesRef    = useRef({ frame: 0 });
   const lenisRef     = useRef(null);
   const [waitlistState, setWaitlistState] = useState({ status: "idle", message: "" });
 
@@ -265,128 +262,96 @@ export default function Home() {
   }, []);
 
   useGSAP(() => {
-    const canvas  = canvasRef.current;
-    const context = canvas.getContext("2d");
-    contextRef.current = context;
+    const video = videoRef.current;
     const mobileQuery = window.matchMedia("(max-width: 768px)");
+    const ease = gsap.parseEase("power2.inOut");
 
-    const setSize = () => {
-      const pr = window.devicePixelRatio || 1;
-      const vh = window.visualViewport?.height || window.innerHeight;
-      canvas.width  = Math.floor(window.innerWidth * pr);
-      canvas.height = Math.floor(vh * pr);
-      canvas.style.width  = window.innerWidth + "px";
-      canvas.style.height = vh + "px";
-      context.setTransform(pr, 0, 0, pr, 0, 0);
-    };
-    setSize();
-
-    const FC = 337;
-    const src = (i) => `/frames/frame_${(i + 1).toString().padStart(4, "0")}.jpg`;
-
-    let images = [];
-    let left   = FC;
-    const loaded = () => { if (!--left) { draw(); boot(); } };
-
-    for (let i = 0; i < FC; i++) {
-      const img = new Image();
-      img.onload = img.onerror = loaded;
-      img.src = src(i);
-      images.push(img);
-    }
-    imagesRef.current = images;
-
-    const draw = () => {
-      const cw = window.innerWidth;
-      const ch = window.visualViewport?.height || window.innerHeight;
-      context.clearRect(0, 0, cw, ch);
-      const img = images[framesRef.current.frame];
-      if (!img?.complete || !img.naturalWidth) return;
-      const ia = img.naturalWidth / img.naturalHeight, ca = cw / ch;
-      let dw, dh, dx, dy;
-      if (ia > ca) { dh = ch; dw = dh * ia; dx = (cw - dw) / 2; dy = 0; }
-      else          { dw = cw; dh = dw / ia; dx = 0; dy = (ch - dh) / 2; }
-      context.drawImage(img, dx, dy, dw, dh);
+    const updateVideoTime = (progress) => {
+      if (!video?.duration || !Number.isFinite(video.duration)) return;
+      video.currentTime = ease(progress) * video.duration;
     };
 
-    const boot = () => {
-      const ease = gsap.parseEase("power2.inOut");
+    video?.pause();
 
-      ScrollTrigger.create({
-        trigger: ".hero",
-        start: "top top",
-        end: () => mobileQuery.matches ? "+=320%" : "+=500%",
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const p = self.progress;
-          const isMobile = mobileQuery.matches;
-          const headerDepth = isMobile ? -260 : -500;
-          const phoneStartY = isMobile ? 78 : 120;
-          const phoneTiltX = isMobile ? 0 : 75;
-          const phoneTiltY = isMobile ? 0 : -35;
-          framesRef.current.frame = Math.round(ease(p) * (FC - 1));
-          draw();
-          gsap.set(heroOverlayRef.current, { opacity: 1 - p });
+    ScrollTrigger.create({
+      trigger: ".hero",
+      start: "top top",
+      end: () => mobileQuery.matches ? "+=320%" : "+=500%",
+      pin: true,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        const isMobile = mobileQuery.matches;
+        const headerDepth = isMobile ? -260 : -500;
+        const phoneStartY = isMobile ? 78 : 120;
+        const phoneTiltX = isMobile ? 0 : 75;
+        const phoneTiltY = isMobile ? 0 : -35;
 
-          if (p <= 0.5) {
-            const hp = p / 0.5;
-            let op = 1;
-            if (hp >= 0.7) op = 1 - (hp - 0.7) / 0.3;
-            gsap.set(headerRef.current, {
-              transform: `translate(-50%, -50%) translateZ(${hp * headerDepth}px)`,
-              opacity: op,
-            });
-          } else {
-            gsap.set(headerRef.current, { opacity: 0 });
-          }
+        updateVideoTime(p);
+        gsap.set(heroOverlayRef.current, { opacity: 1 - p });
 
-          if (p < 0.45) {
-            gsap.set(heroImgRef.current, { y: `${phoneStartY}svh`, rotateX: phoneTiltX, rotateY: phoneTiltY, opacity: 0 });
-          } else if (p <= 0.75) {
-            const t = (p - 0.45) / 0.3;
-            const e = 1 - Math.pow(1 - t, 3);
-            gsap.set(heroImgRef.current, {
-              y: `${phoneStartY * (1 - e)}svh`,
-              rotateX: phoneTiltX * (1 - e),
-              rotateY: phoneTiltY * (1 - e),
-              opacity: t <= 0.3 ? t / 0.3 : 1,
-            });
-          } else {
-            gsap.set(heroImgRef.current, { y: "0vh", rotateX: 0, rotateY: 0, opacity: 1 });
-          }
-        },
-      });
+        if (p <= 0.5) {
+          const hp = p / 0.5;
+          let op = 1;
+          if (hp >= 0.7) op = 1 - (hp - 0.7) / 0.3;
+          gsap.set(headerRef.current, {
+            transform: `translate(-50%, -50%) translateZ(${hp * headerDepth}px)`,
+            opacity: op,
+          });
+        } else {
+          gsap.set(headerRef.current, { opacity: 0 });
+        }
+
+        if (p < 0.45) {
+          gsap.set(heroImgRef.current, { y: `${phoneStartY}svh`, rotateX: phoneTiltX, rotateY: phoneTiltY, opacity: 0 });
+        } else if (p <= 0.75) {
+          const t = (p - 0.45) / 0.3;
+          const e = 1 - Math.pow(1 - t, 3);
+          gsap.set(heroImgRef.current, {
+            y: `${phoneStartY * (1 - e)}svh`,
+            rotateX: phoneTiltX * (1 - e),
+            rotateY: phoneTiltY * (1 - e),
+            opacity: t <= 0.3 ? t / 0.3 : 1,
+          });
+        } else {
+          gsap.set(heroImgRef.current, { y: "0vh", rotateX: 0, rotateY: 0, opacity: 1 });
+        }
+      },
+    });
 
 /* ── Feature sections stagger in ── */
-      gsap.utils.toArray(".feature-section").forEach((sec) => {
-        gsap.from(sec.querySelectorAll(".feature-copy > *"), {
-          y: 80, 
-          opacity: 0, 
-          duration: 1.2, 
-          stagger: 0.15, 
-          ease: "power4.out",
-          scrollTrigger: { trigger: sec, start: "top 80%" },
-        });
-        gsap.from(sec.querySelectorAll(".phone, .g-phone"), {
-          y: 150, 
-          opacity: 0, 
-          duration: 1.5, 
-          stagger: 0.2, 
-          ease: "power4.out",
-          scrollTrigger: { trigger: sec, start: "top 75%" },
-        });
+    gsap.utils.toArray(".feature-section").forEach((sec) => {
+      gsap.from(sec.querySelectorAll(".feature-copy > *"), {
+        y: 80, 
+        opacity: 0, 
+        duration: 1.2, 
+        stagger: 0.15, 
+        ease: "power4.out",
+        scrollTrigger: { trigger: sec, start: "top 80%" },
       });
-    };
+      gsap.from(sec.querySelectorAll(".phone, .g-phone"), {
+        y: 150, 
+        opacity: 0, 
+        duration: 1.5, 
+        stagger: 0.2, 
+        ease: "power4.out",
+        scrollTrigger: { trigger: sec, start: "top 75%" },
+      });
+    });
 
     let resizeTimer;
     const onResize = () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => { setSize(); draw(); ScrollTrigger.refresh(); }, 150);
+      resizeTimer = setTimeout(() => { ScrollTrigger.refresh(); }, 150);
     };
     window.addEventListener("resize", onResize);
-    return () => { window.removeEventListener("resize", onResize); clearTimeout(resizeTimer); };
+    video?.addEventListener("loadedmetadata", ScrollTrigger.refresh);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      video?.removeEventListener("loadedmetadata", ScrollTrigger.refresh);
+      clearTimeout(resizeTimer);
+    };
   }, { scope: containerRef });
 
   /* ── Helpers ── */
@@ -420,7 +385,16 @@ export default function Home() {
 
       {/* ════════════════════════════════════════════ HERO */}
       <section className="hero">
-        <canvas ref={canvasRef} />
+        <video
+          ref={videoRef}
+          className="hero-video"
+          src="/hero-video-scrub.mp4"
+          poster="/hero-poster.jpg"
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        />
         <div className="hero-overlay" ref={heroOverlayRef} />
         <div className="hero-content">
           <div className="header" ref={headerRef}>
