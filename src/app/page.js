@@ -54,6 +54,15 @@ const STORY_NOTES = [
 ];
 
 const HERO_CITIES = ["Bangkok", "Istanbul", "Dubai", "Singapore", "Phuket", "Bali"];
+const HERO_FRAME_COUNT = 337;
+
+const getHeroFrameSrc = (frame) => `/frames/frame_${String(frame).padStart(4, "0")}.jpg`;
+
+const shouldUseHeroFrameScrub = () => {
+  if (typeof navigator === "undefined") return false;
+  const { userAgent, platform, maxTouchPoints } = navigator;
+  return /iPad|iPhone|iPod/.test(userAgent) || (platform === "MacIntel" && maxTouchPoints > 1);
+};
 
 const STAY_COLUMNS = [
   ["Arrival", ["Mobile check-in completed", "Room 402 assigned", "Luggage held in storage"]],
@@ -130,6 +139,7 @@ async function readJsonResponse(response) {
 export default function Home() {
   const containerRef = useRef(null);
   const videoRef     = useRef(null);
+  const heroFrameRef = useRef(null);
   const navRef       = useRef(null);
   const headerRef    = useRef(null);
   const heroOverlayRef = useRef(null);
@@ -276,15 +286,32 @@ export default function Home() {
 
   useGSAP(() => {
     const video = videoRef.current;
+    const heroFrame = heroFrameRef.current;
+    const useFrameScrub = shouldUseHeroFrameScrub();
     const mobileQuery = window.matchMedia("(max-width: 768px)");
     const ease = gsap.parseEase("power2.inOut");
+    let currentFrame = 1;
 
     const updateVideoTime = (progress) => {
       if (!video?.duration || !Number.isFinite(video.duration)) return;
       video.currentTime = ease(progress) * video.duration;
     };
 
+    const updateHeroFrame = (progress) => {
+      if (!heroFrame) return;
+      const frame = Math.min(
+        HERO_FRAME_COUNT,
+        Math.max(1, Math.round(ease(progress) * (HERO_FRAME_COUNT - 1)) + 1)
+      );
+      if (frame === currentFrame) return;
+      currentFrame = frame;
+      heroFrame.src = getHeroFrameSrc(frame);
+    };
+
     video?.pause();
+    gsap.set(video, { autoAlpha: useFrameScrub ? 0 : 1 });
+    gsap.set(heroFrame, { autoAlpha: useFrameScrub ? 1 : 0 });
+    if (useFrameScrub) updateHeroFrame(0);
 
     ScrollTrigger.create({
       trigger: ".hero",
@@ -301,7 +328,11 @@ export default function Home() {
         const phoneTiltX = isMobile ? 0 : 75;
         const phoneTiltY = isMobile ? 0 : -35;
 
-        updateVideoTime(p);
+        if (useFrameScrub) {
+          updateHeroFrame(p);
+        } else {
+          updateVideoTime(p);
+        }
         gsap.set(heroOverlayRef.current, { opacity: 1 - p });
 
         if (p <= 0.5) {
@@ -407,6 +438,14 @@ export default function Home() {
           playsInline
           preload="auto"
           aria-hidden="true"
+        />
+        <img
+          ref={heroFrameRef}
+          className="hero-frame-scroller"
+          src={getHeroFrameSrc(1)}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
         />
         <div className="hero-overlay" ref={heroOverlayRef} />
         <div className="hero-content">

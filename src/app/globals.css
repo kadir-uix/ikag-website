@@ -219,6 +219,18 @@ section {
   background: #050504;
 }
 
+.hero-frame-scroller {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #050504;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
